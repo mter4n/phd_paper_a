@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transitorios cuánticos de partículas idénticas: difracción en el tiempo e interferencia de intercambio</title>
+<meta name="description" content="Transitorios cuánticos de partículas idénticas: difracción en el tiempo e interferencia de intercambio. Extensión a dos partículas del obturador cuántico de Moshinsky, con solución analítica exacta para la densidad de detección conjunta. Terán, Romo y García-Calderón.">
+<meta name="author" content="Miguel Ángel Terán, Roberto Romo, Gastón García-Calderón">
+
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('paper-tema');
+      if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oscuro' : 'claro';
+      if (t === 'oscuro' || t === 'lectura') document.documentElement.setAttribute('data-tema', t);
+    } catch (e) {}
+  })();
+</script>
+
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['\\[', '\\]']],
+      tags: 'none'
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] },
+    startup: {
+      ready: function () {
+        MathJax.startup.defaultReady();
+        MathJax.startup.promise.then(function () {
+          document.body.classList.add('mathjax-listo');
+          if (window.IEC_CONTENIDO) window.IEC_CONTENIDO();
+        });
+      }
+    }
+  };
+</script>
+<!-- MathJax 3.2.2 incluido en vendor/ para que la carpeta funcione sin conexión.
+     Apache-2.0 · véase vendor/mathjax/LICENSE -->
+<script id="MathJax-script" async src="vendor/mathjax/tex-mml-chtml.js"></script>
+
+<style>
+/* ===================================================================
+   Paleta y tipografía — tomadas del sitio del curso (assets/css/estilos.css)
+   para que esta página se vea como el resto del material.
+   =================================================================== */
+:root {
+  --azul-oscuro: #1e2a6b;
+  --azul-medio: #3a4fa3;
+  --azul-claro: #eceffb;
+  --verde: #00643c;
+  --verde-claro: #e6f4ec;
+  --naranja: #b46400;
+  --naranja-claro: #fdf3e3;
+
+  --texto: #1c2330;
+  --texto-suave: #5b6675;
+  --borde: #e2e8f0;
+  --fondo: #ffffff;
+  --fondo-alt: #f7f9fc;
+  --tarjeta: #ffffff;
+  --nav-fondo: rgba(255, 255, 255, .86);
+  --hero-1: rgba(58, 79, 163, .13);
+  --hero-2: rgba(0, 100, 60, .07);
+  --brillo-fig: none;
+
+  --radio: 14px;
+  --radio-sm: 9px;
+  --sombra: 0 1px 2px rgba(16, 30, 54, .04), 0 6px 20px rgba(16, 30, 54, .06);
+  --ancho: 1140px;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --alto-nav: 64px;
+}
+
+[data-tema="oscuro"] {
+  --azul-oscuro: #a3b0f0;
+  --azul-medio: #8b9aec;
+  --azul-claro: #1a1f3d;
+  --verde: #6fd0a4;
+  --verde-claro: #0e2a20;
+  --naranja: #e2a755;
+  --naranja-claro: #2b2010;
+
+  --texto: #e5ecf4;
+  --texto-suave: #97a5b6;
+  --borde: #27313f;
+  --fondo: #0f1520;
+  --fondo-alt: #151d2a;
+  --tarjeta: #182131;
+  --nav-fondo: rgba(15, 21, 32, .88);
+  --hero-1: rgba(139, 154, 236, .13);
+  --hero-2: rgba(111, 208, 164, .07);
+  --brillo-fig: brightness(.92) contrast(1.02);
+
+  --sombra: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px rgba(0, 0, 0, .28);
+  color-scheme: dark;
+}
+
+/* --- Modo lectura: fondo de papel cálido ---
+   El texto no es negro puro sino pardo oscuro: sobre un fondo crema el
+   negro absoluto produce demasiado contraste y cansa. Los acentos se
+   desplazan hacia el cálido para que el azul no compita con el papel. */
+[data-tema="lectura"] {
+  --azul-oscuro: #33417d;
+  --azul-medio: #4c5a9c;
+  --azul-claro: #e9e4dd;
+  --verde: #4a6a2f;
+  --verde-claro: #e8ecd9;
+  --naranja: #9c5a12;
+  --naranja-claro: #f6ead4;
+
+  --texto: #3b3226;
+  --texto-suave: #6f6354;
+  --borde: #ded1b6;
+  --fondo: #f7f0de;
+  --fondo-alt: #f1e8d1;
+  --tarjeta: #fbf5e7;
+  --nav-fondo: rgba(247, 240, 222, .88);
+  --hero-1: rgba(76, 90, 156, .10);
+  --hero-2: rgba(156, 90, 18, .07);
+  /* Las figuras traen fondo blanco: se entibian para que no destellen */
+  --brillo-fig: sepia(.22) brightness(.99) contrast(1.02) saturate(.95);
+
+  --sombra: 0 1px 2px rgba(90, 70, 40, .05), 0 6px 20px rgba(90, 70, 40, .08);
+  --sombra-hover: 0 2px 4px rgba(90, 70, 40, .08), 0 14px 34px rgba(90, 70, 40, .14);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; font-family: var(--sans); font-size: 17px; line-height: 1.72;
+  color: var(--texto); background: var(--fondo);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--azul-medio); text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1, h2, h3 { line-height: 1.25; letter-spacing: -.015em; margin: 0; }
+
+.contenedor { width: 100%; max-width: var(--ancho); margin: 0 auto; padding: 0 24px; }
+
+/* --- Barra de navegación --- */
+.nav {
+  position: sticky; top: 0; z-index: 100; height: var(--alto-nav);
+  background: var(--nav-fondo);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid var(--borde);
+}
+.nav__inner { height: 100%; display: flex; align-items: center; gap: 20px; }
+.nav__marca { display: flex; align-items: center; gap: 11px; font-weight: 700; color: var(--texto); letter-spacing: -.02em; }
+.nav__marca:hover { text-decoration: none; }
+.nav__logo {
+  width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--azul-medio), var(--azul-oscuro));
+  color: #fff; display: grid; place-items: center;
+  font-size: 12px; font-weight: 800; letter-spacing: -.03em;
+}
+.nav__marca span { font-size: 15px; }
+.nav__marca small { display: block; font-size: 11.5px; font-weight: 500; color: var(--texto-suave); letter-spacing: 0; }
+.nav__acciones { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+
+.tema-btn, .toc-btn {
+  display: grid; place-items: center; width: 36px; height: 36px;
+  background: var(--fondo-alt); color: var(--texto-suave);
+  border: 1px solid var(--borde); border-radius: 9px; cursor: pointer; transition: .18s;
+}
+.tema-btn:hover, .toc-btn:hover { color: var(--azul-oscuro); border-color: color-mix(in srgb, var(--azul-medio) 38%, var(--fondo)); }
+.tema-btn svg, .toc-btn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+/* El botón muestra el icono del modo activo; el título dice a cuál se pasa */
+.tema-btn svg { display: none; }
+.tema-btn .ico-claro { display: block; }
+[data-tema="lectura"] .tema-btn .ico-claro,
+[data-tema="oscuro"] .tema-btn .ico-claro { display: none; }
+[data-tema="lectura"] .tema-btn .ico-lectura { display: block; }
+[data-tema="oscuro"] .tema-btn .ico-oscuro { display: block; }
+[data-tema="lectura"] .tema-btn { color: var(--naranja); }
+.toc-btn { display: none; }
+
+/* --- Portada --- */
+.hero {
+  background:
+    radial-gradient(1100px 480px at 82% -12%, var(--hero-1), transparent 62%),
+    radial-gradient(760px 400px at 8% 8%, var(--hero-2), transparent 60%),
+    var(--fondo-alt);
+  border-bottom: 1px solid var(--borde);
+  padding: 60px 0 52px;
+}
+.hero__etiqueta {
+  display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--azul-medio); background: var(--azul-claro); padding: 5px 12px; border-radius: 999px; margin-bottom: 18px;
+}
+.hero h1 { font-size: clamp(1.85rem, 4vw, 2.6rem); margin-bottom: .55em; max-width: 22em; }
+.autores { font-size: 1.02rem; color: var(--texto); margin: 0 0 6px; font-weight: 500; }
+.afiliaciones { font-size: 14px; color: var(--texto-suave); margin: 0 0 22px; line-height: 1.6; }
+.afiliaciones sup { color: var(--azul-medio); font-weight: 700; }
+.hero__datos { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12.5px; font-weight: 600; letter-spacing: .02em;
+  padding: 5px 12px; border-radius: 999px;
+  background: var(--tarjeta); border: 1px solid var(--borde); color: var(--texto-suave);
+}
+.chip svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* --- Layout con índice lateral --- */
+.layout {
+  max-width: var(--ancho); margin: 0 auto; padding: 0 24px;
+  display: grid; grid-template-columns: 258px minmax(0, 1fr); gap: 52px;
+  align-items: start;
+}
+.toc {
+  position: sticky; top: calc(var(--alto-nav) + 26px);
+  max-height: calc(100vh - var(--alto-nav) - 52px); overflow-y: auto;
+  padding: 30px 0 40px; font-size: 14px;
+}
+.toc__titulo { font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--texto-suave); margin-bottom: 14px; }
+.toc ol { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--borde); }
+.toc li a {
+  display: block; padding: 6px 0 6px 15px; margin-left: -2px;
+  border-left: 2px solid transparent; color: var(--texto-suave); line-height: 1.45; transition: .16s;
+}
+.toc li a:hover { color: var(--azul-oscuro); text-decoration: none; }
+.toc li a.activo { color: var(--azul-oscuro); font-weight: 600; border-left-color: var(--azul-medio); }
+.toc li.sub a { padding-left: 27px; font-size: 13.3px; }
+
+.toc__ecs { list-style: none; display: flex; flex-wrap: wrap; gap: 5px; margin: 0; padding: 0; }
+.toc__ecs a {
+  display: block; min-width: 34px; padding: 3px 8px;
+  text-align: center; font-size: 12.5px; font-variant-numeric: tabular-nums;
+  color: var(--texto-suave); background: var(--fondo-alt);
+  border: 1px solid var(--borde); border-radius: 7px; transition: .16s;
+}
+.toc__ecs a:hover { color: var(--azul-oscuro); border-color: color-mix(in srgb, var(--azul-medio) 40%, var(--fondo)); text-decoration: none; }
+.toc__titulo--ecs { margin-top: 26px; }
+
+/* --- Cuerpo del artículo --- */
+.articulo { padding: 34px 0 90px; min-width: 0; max-width: 780px; }
+.articulo h2 {
+  font-size: 1.52rem; margin: 2.5em 0 .7em; padding-top: .35em;
+  scroll-margin-top: calc(var(--alto-nav) + 20px);
+}
+.articulo h2:first-of-type { margin-top: 0; }
+.articulo h2 .sec-n { color: var(--azul-medio); font-variant-numeric: tabular-nums; margin-right: .45em; }
+.articulo h3 {
+  font-size: 1.14rem; margin: 2em 0 .6em; color: var(--azul-oscuro);
+  scroll-margin-top: calc(var(--alto-nav) + 20px);
+}
+.articulo h3 .sec-n { font-variant-numeric: tabular-nums; margin-right: .4em; opacity: .75; }
+.articulo h4 { font-size: 1.02rem; margin: 1.8em 0 .5em; color: var(--texto); scroll-margin-top: calc(var(--alto-nav) + 20px); }
+.articulo p { margin: 0 0 1.15em; text-align: justify; hyphens: auto; }
+
+/* --- Secciones desplegables --- */
+.barra-secciones { display: flex; justify-content: flex-end; margin: 26px 0 -14px; }
+.btn-todo {
+  font: inherit; font-size: 13.2px; font-weight: 600;
+  color: var(--texto-suave); background: var(--fondo-alt);
+  border: 1px solid var(--borde); border-radius: 8px;
+  padding: 6px 13px; cursor: pointer; transition: .18s;
+}
+.btn-todo:hover { color: var(--azul-oscuro); border-color: color-mix(in srgb, var(--azul-medio) 38%, var(--fondo)); }
+.btn-todo:focus-visible { outline: 2px solid var(--azul-medio); outline-offset: 2px; }
+
+.sec { border-bottom: 1px solid var(--borde); }
+.sec:last-of-type { border-bottom: 0; }
+
+/* Se oculta el triángulo nativo y se usa el galón, como en el menú del sitio */
+.sec__cab::-webkit-details-marker, .sub__cab::-webkit-details-marker { display: none; }
+.sec__cab, .sub__cab {
+  display: flex; align-items: center; gap: 14px;
+  list-style: none; cursor: pointer;
+  scroll-margin-top: calc(var(--alto-nav) + 12px);
+}
+.sec__cab:hover h2, .sub__cab:hover h3 { color: var(--azul-medio); }
+.sec__cab:focus-visible, .sub__cab:focus-visible { outline: 2px solid var(--azul-medio); outline-offset: 4px; border-radius: var(--radio-sm); }
+
+.sec__cab h2, .sub__cab h3 { flex: 1; transition: color .16s; }
+.sec__cab h2 { margin: 1.9em 0 .7em; }
+.sub__cab h3 { margin: 1.7em 0 .55em; }
+
+.galon {
+  width: 19px; height: 19px; flex-shrink: 0;
+  fill: none; stroke: var(--texto-suave); stroke-width: 2.1;
+  stroke-linecap: round; stroke-linejoin: round;
+  transition: transform .22s ease, stroke .16s;
+}
+.sub__cab .galon { width: 16px; height: 16px; }
+details[open] > summary .galon { transform: rotate(180deg); }
+summary:hover .galon { stroke: var(--azul-medio); }
+
+/* El encabezado ahora vive dentro del summary: se ajustan los márgenes */
+.sec__cuerpo > *:first-child, .sub__cuerpo > *:first-child { margin-top: 0; }
+.sec__cuerpo { padding-bottom: 14px; }
+.sec:not([open]) > .sec__cab h2 { margin-bottom: 1.1em; }
+.sub:not([open]) > .sub__cab h3 { margin-bottom: 1.1em; }
+
+/* Distintivo con lo que queda oculto al plegar */
+.cuenta {
+  font-size: 12px; font-weight: 600; letter-spacing: .02em; white-space: nowrap;
+  color: var(--texto-suave); background: var(--fondo-alt);
+  border: 1px solid var(--borde); border-radius: 999px; padding: 3px 10px;
+  opacity: 0; transition: opacity .18s;
+}
+details:not([open]) > summary .cuenta { opacity: 1; }
+
+@media (max-width: 620px) {
+  .cuenta { display: none; }
+  .sec__cab, .sub__cab { gap: 10px; }
+}
+
+@media print {
+  .barra-secciones, .galon, .cuenta { display: none !important; }
+  .sec__cuerpo, .sub__cuerpo { display: block !important; }
+}
+
+/* --- Resumen --- */
+.resumen {
+  background: var(--fondo-alt); border: 1px solid var(--borde);
+  border-radius: var(--radio); padding: 26px 30px; margin: 0 0 10px;
+}
+.resumen h2 { font-size: 12px !important; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--texto-suave); margin: 0 0 12px !important; padding: 0 !important; }
+.resumen p { margin-bottom: 0; font-size: 16px; }
+
+/* --- Ecuaciones --- */
+.ec {
+  margin: 1.5em 0; padding: 4px 0;
+  border-radius: var(--radio-sm);
+  scroll-margin-top: calc(var(--alto-nav) + 24px);
+  transition: background-color .5s ease;
+  overflow-x: auto; overflow-y: hidden;
+}
+.ec.destello { background: var(--azul-claro); }
+mjx-container[display="true"] { margin: 0 !important; }
+
+/* Una expresión en línea muy larga no puede partirse: que se desplace dentro
+   de su propia caja en lugar de ensanchar la página en pantallas angostas. */
+.articulo mjx-container:not([display="true"]),
+figcaption mjx-container:not([display="true"]) {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  vertical-align: bottom;
+}
+
+/* Antes de que MathJax termine, el TeX crudo no debe verse desbordado */
+body:not(.mathjax-listo) .ec { opacity: .35; }
+
+/* --- Figuras --- */
+figure { margin: 2.4em 0; }
+figure img {
+  display: block; max-width: 100%; height: auto; margin: 0 auto;
+  border-radius: var(--radio-sm); border: 1px solid var(--borde);
+  background: var(--tarjeta); filter: var(--brillo-fig);
+}
+/* Las gráficas traen fondo blanco opaco. En modo lectura se funden con el
+   papel multiplicando: el blanco desaparece y solo quedan trazos y ejes,
+   como si estuvieran impresos en la hoja. */
+[data-tema="lectura"] figure img {
+  background: transparent;
+  filter: none;
+  mix-blend-mode: multiply;
+}
+figcaption { font-size: 13.6px; color: var(--texto-suave); line-height: 1.6; margin-top: 12px; text-align: justify; }
+figcaption b { color: var(--texto); font-weight: 600; }
+.fig-media img { max-width: min(620px, 100%); }
+
+/* --- Nota al pie --- */
+.nota {
+  font-size: 14.2px; color: var(--texto-suave); line-height: 1.6;
+  border-left: 3px solid var(--borde); padding: 4px 0 4px 16px; margin: 1.6em 0;
+}
+.nota b { color: var(--texto); }
+
+/* --- Referencias --- */
+.refs { list-style: none; counter-reset: r; margin: 0; padding: 0; font-size: 15.4px; }
+.refs li {
+  counter-increment: r; position: relative; padding-left: 34px; margin-bottom: 14px;
+  color: var(--texto-suave); line-height: 1.6;
+}
+.refs li::before {
+  content: "[" counter(r) "]"; position: absolute; left: 0; top: 0;
+  color: var(--azul-medio); font-variant-numeric: tabular-nums; font-size: 13.5px; font-weight: 600;
+}
+.refs cite { font-style: italic; color: var(--texto); }
+.refs .aut { color: var(--texto); }
+
+/* --- Pie --- */
+.pie { border-top: 1px solid var(--borde); background: var(--fondo-alt); padding: 34px 0; margin-top: 40px; }
+.pie__inner { display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; font-size: 13.6px; color: var(--texto-suave); line-height: 1.6; }
+.pie strong { color: var(--texto); display: block; font-size: 14.5px; margin-bottom: 3px; }
+
+/* --- Responsivo --- */
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: 1fr; gap: 0; }
+  .toc {
+    position: fixed; top: var(--alto-nav); left: 0; right: 0; bottom: 0; z-index: 90;
+    max-height: none; background: var(--fondo); border-bottom: 1px solid var(--borde);
+    padding: 24px; overflow-y: auto; display: none;
+  }
+  .toc.abierto { display: block; }
+  .toc-btn { display: grid; }
+  .articulo { padding-top: 26px; }
+}
+@media (max-width: 620px) {
+  body { font-size: 16px; }
+  .hero { padding: 42px 0 36px; }
+  .articulo p { text-align: left; }
+  figcaption { text-align: left; }
+  .resumen { padding: 20px 18px; }
+}
+@media print {
+  /* En papel siempre se imprime en claro, sea cual sea el modo en pantalla */
+  :root, [data-tema="lectura"], [data-tema="oscuro"] {
+    --texto: #000; --texto-suave: #444; --borde: #bbb;
+    --fondo: #fff; --fondo-alt: #fff; --tarjeta: #fff;
+    --azul-oscuro: #000; --azul-medio: #333; --azul-claro: #eee;
+    --brillo-fig: none; --sombra: none;
+  }
+  body { background: #fff; color: #000; }
+  .nav, .toc, .toc-btn, .tema-btn, .pie { display: none !important; }
+  .layout { display: block; padding: 0; }
+  .articulo { max-width: none; padding: 0; }
+  .hero { background: none; border: none; padding: 0 0 18px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="contenedor nav__inner">
+    <a class="nav__marca" href="#inicio">
+      <span class="nav__logo">TC</span>
+      <span>Transitorios cuánticos<small>Terán · Romo · García-Calderón</small></span>
+    </a>
+    <div class="nav__acciones">
+      <button class="toc-btn" id="toc-btn" type="button" aria-label="Mostrar el índice" aria-expanded="false" aria-controls="toc">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <button class="tema-btn" id="tema-btn" type="button" title="Cambiar de modo">
+        <svg class="ico-claro" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2.2M12 19.4v2.2M2.4 12h2.2M19.4 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6"/></svg>
+        <svg class="ico-lectura" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.4h5.6A3.4 3.4 0 0 1 12 8.8v10a2.8 2.8 0 0 0-2.8-2.4H3Z"/><path d="M21 5.4h-5.6A3.4 3.4 0 0 0 12 8.8v10a2.8 2.8 0 0 1 2.8-2.4H21Z"/></svg>
+        <svg class="ico-oscuro" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="inicio">
+  <div class="contenedor">
+    <span class="hero__etiqueta">Artículo · Mecánica cuántica dependiente del tiempo</span>
+    <h1>Transitorios cuánticos de partículas idénticas: difracción en el tiempo e interferencia de intercambio</h1>
+    <p class="autores">Miguel Ángel Terán<sup>1</sup>, Roberto Romo<sup>1</sup> y Gastón García-Calderón<sup>2</sup></p>
+    <p class="afiliaciones">
+      <sup>1</sup> Facultad de Ciencias, Universidad Autónoma de Baja California, Ensenada, Baja California, México<br>
+      <sup>2</sup> Instituto de Física, Universidad Nacional Autónoma de México, Ciudad de México, México
+    </p>
+    <div class="hero__datos">
+      <span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V6a2 2 0 0 1 2-2h11a1 1 0 0 1 1 1v13"/><path d="M6 17h12v3H6a2 2 0 0 1 0-4"/></svg> 4 secciones</span>
+      <span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg> 45 ecuaciones</span>
+      <span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 15l5-4 4 3 3-3 6 5"/></svg> 7 figuras</span>
+      <span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Versión en español</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+<aside class="toc" id="toc">
+  <p class="toc__titulo">Contenido</p>
+  <ol>
+    <li><a href="#resumen">Resumen</a></li>
+    <li><a href="#introduccion">1 · Introducción</a></li>
+    <li><a href="#soluciones">2 · Soluciones analíticas</a></li>
+    <li class="sub"><a href="#obturador-simple">2.1 El obturador cuántico simple</a></li>
+    <li class="sub"><a href="#obturador-dos">2.2 Estado de dos partículas</a></li>
+    <li><a href="#transitorio">3 · Comportamiento transitorio</a></li>
+    <li class="sub"><a href="#caso-1">3.1 Difracción realzada</a></li>
+    <li class="sub"><a href="#caso-2">3.2 Modulación por batidos</a></li>
+    <li class="sub"><a href="#caso-3">3.3 Fluctuaciones intensas</a></li>
+    <li><a href="#conclusiones">4 · Conclusiones</a></li>
+    <li><a href="#referencias">Referencias</a></li>
+  </ol>
+
+  <p class="toc__titulo toc__titulo--ecs">Ecuaciones</p>
+  <ul class="toc__ecs" id="lista-ecs"></ul>
+</aside>
+
+<main class="articulo">
+<section class="resumen" id="resumen">
+  <h2>Resumen</h2>
+  <p>
+    Investigamos la dinámica transitoria de un estado de dos partículas que describe partículas
+    copropagantes, dentro de una extensión analíticamente soluble del modelo del obturador cuántico
+    de Moshinsky. La densidad de probabilidad conjunta dependiente del tiempo se analiza para tres
+    configuraciones representativas de posiciones y números de onda. Para posiciones idénticas y
+    números de onda iguales, los canales simétrico y antisimétrico exhiben interferencia de
+    intercambio completamente constructiva y destructiva, respectivamente, mientras que la dinámica
+    transitoria de difracción en el tiempo admite una representación compacta en términos de una
+    función de Bessel de orden cero. Para posiciones coincidentes y números de onda ligeramente
+    distintos, la dinámica transitoria desarrolla una estructura de batidos cuánticos, para la cual
+    se obtienen expresiones analíticas tanto de la frecuencia de oscilación principal como de la
+    envolvente del batido. Finalmente, para posiciones y números de onda diferentes, la densidad de
+    probabilidad conjunta revela tres regímenes temporales: un intervalo inicial de probabilidad
+    despreciable, una meseta intermedia de duración finita y un régimen de tiempos largos
+    caracterizado por fluctuaciones pronunciadas. La estructura analítica de la solución pone de
+    manifiesto dos contribuciones físicamente distintas a la dinámica: un término no exponencial
+    asociado a la difracción en el tiempo y un término exponencial responsable de la estructura
+    oscilatoria persistente que gobierna el comportamiento a tiempos largos.
+  </p>
+</section>
+
+<div class="barra-secciones">
+  <button class="btn-todo" id="btn-todo" type="button" aria-live="polite">Contraer todo</button>
+</div>
+
+<details class="sec" open data-clave="introduccion">
+<summary class="sec__cab"><h2 id="introduccion"><span class="sec-n">1</span>Introducción</h2><svg class="galon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5 12 15.5 18 9.5"/></svg></summary>
+<div class="sec__cuerpo">
+<p>
+  Los transitorios cuánticos son fenómenos dinámicos temporales que surgen cuando los sistemas
+  cuánticos evolucionan a partir de estados iniciales preparados de manera abrupta, o tras cambios
+  súbitos en sus interacciones o condiciones de frontera, antes de aproximarse finalmente a su
+  comportamiento de tiempos largos. Permiten acceder a efectos propiamente dinámicos que
+  permanecen ocultos en las descripciones estacionarias, lo que los convierte en un tema fundamental
+  dentro del estudio de la mecánica cuántica dependiente del tiempo.
+</p>
+
+<p>
+  El obturador cuántico de Moshinsky, introducido en 1952 [1], se ha convertido en un modelo
+  paradigmático exactamente soluble para investigar transitorios cuánticos. En su forma más simple,
+  el modelo describe la evolución libre de ondas planas truncadas tras retirar súbitamente un obturador absorbente, dando lugar al fenómeno emblemático de la <em>difracción en el tiempo</em>,
+  la contraparte temporal de la difracción de Fresnel por un borde recto. Esta notable predicción se verificó experimentalmente décadas más tarde por Dalibard y colaboradores mediante átomos ultrafríos
+  de cesio [2], lo que estableció al obturador cuántico como un marco fundamental para el estudio de
+  la dinámica transitoria de ondas de materia.
+</p>
+
+<p>
+  Si bien el obturador cuántico ha sido ampliamente estudiado en el contexto de la dinámica de una
+  sola partícula, muchos experimentos contemporáneos involucran la copropagación de partículas
+  idénticas, donde la interferencia de intercambio desempeña un papel fundamental. Este tipo de configuraciones surge de forma natural en experimentos de tiempo de vuelo con átomos ultrafríos
+  liberados de trampas ópticas o magnéticas. Los primeros experimentos de Yasuda <em>et al.</em> [3]
+  y Schellekens <em>et al.</em> [4] demostraron el comportamiento de agrupamiento
+  (<em>bunching</em>) de átomos bosónicos, mientras que Jeltes <em>et al.</em> [5] compararon
+  directamente el agrupamiento bosónico y el antiagrupamiento fermiónico en condiciones experimentales esencialmente idénticas. Estos experimentos motivan la extensión de los estudios de
+  transitorios del obturador cuántico más allá del marco de una sola partícula.
+</p>
+
+<p>
+  Esto plantea de inmediato la pregunta de cómo se modifica la dinámica transitoria del
+  obturador cuántico cuando el modelo se extiende de una a dos partículas idénticas. En particular, importa determinar cómo afecta a esa dinámica la interferencia de intercambio, inherente a las partículas idénticas.
+  El presente trabajo aborda este problema dentro de una extensión exactamente soluble del obturador
+  cuántico de Moshinsky.
+</p>
+
+<p>
+  Con este fin, deducimos una solución analítica exacta de la ecuación de Schrödinger dependiente del
+  tiempo correspondiente, la cual proporciona acceso directo a la densidad de probabilidad de
+  detección conjunta dependiente del tiempo. El análisis se organiza en torno a tres configuraciones
+  representativas de propagación, elegidas para revelar progresivamente las distintas manifestaciones
+  de la interferencia de intercambio en la dinámica transitoria de ondas de materia.
+</p>
+
+<p>
+  El artículo está organizado como sigue. La sección 2 introduce la extensión a dos partículas del
+  obturador cuántico de Moshinsky y deduce la solución analítica exacta, junto con la densidad de
+  probabilidad de detección conjunta y su descomposición en contribuciones directas y de
+  interferencia de intercambio. La sección 3 analiza la dinámica transitoria para las tres
+  configuraciones de propagación consideradas. Finalmente, la sección 4 resume las conclusiones
+  principales y discute sus implicaciones físicas.
+</p>
+</div>
+</details>
+
+<details class="sec" open data-clave="soluciones">
+<summary class="sec__cab"><h2 id="soluciones"><span class="sec-n">2</span>Soluciones analíticas</h2><svg class="galon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5 12 15.5 18 9.5"/></svg></summary>
+<div class="sec__cuerpo">
+<details class="sub" open data-clave="obturador-simple">
+<summary class="sub__cab"><h3 id="obturador-simple"><span class="sec-n">2.1</span>El obturador cuántico simple</h3><svg class="galon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5 12 15.5 18 9.5"/></svg></summary>
+<div class="sub__cuerpo">
+
+
+<p>
+  Un procedimiento eficaz para obtener soluciones analíticas de la ecuación de Schrödinger dependiente
+  del tiempo ha sido el llamado <em>modelo del obturador cuántico</em>, introducido por Moshinsky en
+  1952 [1]. Moshinsky consideró una onda plana truncada incidente por la izquierda sobre un obturador, un
+  dispositivo que, para \(t<0\), confina la función de onda incidente al semiespacio \(x\leq 0\). En
+  \(t=0\) el obturador se abre súbitamente, permitiendo que la onda incidente evolucione a lo largo
+  de la región \(x>0\) y exhiba el fenómeno emblemático de la <em>difracción en el tiempo</em>,
+  verificado experimentalmente por Dalibard <em>et al.</em> [2]; véase también [6] para una revisión
+  exhaustiva de los transitorios cuánticos. Este fenómeno es el análogo temporal de la difracción de
+  Fresnel por un borde: a una distancia fija del obturador, la densidad de probabilidad oscila en el tiempo conforme el frente de onda la rebasa, y es el tiempo el que asume el papel que en el caso óptico corresponde a la coordenada espacial.
+</p>
+
+<p>Un problema genérico de obturador cuántico consiste en resolver la ecuación de Schrödinger dependiente del tiempo,</p>
+
+<div class="ec" id="ec1">\[ \left[i \hbar \frac{\partial}{\partial t}-H\right] \psi(x,k,t)=0, \tag{1} \]</div>
+
+<p>para un estado inicial de la forma</p>
+
+<div class="ec" id="ec2">\[ \psi(x,k,t=0) = \psi_{0}(x,k)\,\Theta(-x), \tag{2} \]</div>
+
+<p>
+  donde \(\Theta\) denota la función escalón de Heaviside, de modo que la función de onda queda
+  confinada a la región \(x\leq 0\) por el obturador. El hamiltoniano es
+</p>
+
+<div class="ec" id="ec3">\[ H(x)=-\frac{\hbar^{2}}{2 m} \frac{\partial^{2}}{\partial x^{2}}+V(x). \tag{3} \]</div>
+
+<p>La solución formal de este problema puede expresarse en términos de una integral del propagador del sistema como</p>
+
+<div class="ec" id="ec4">\[ \psi(x,k,t) = \int_{-\infty}^{\infty} K(x,t|x',0)\,\psi(x',k,0)\, dx', \tag{4} \]</div>
+
+<p>
+  donde \(K(x,t|x',0)\) es el propagador cuántico de la ecuación de Schrödinger asociada al
+  hamiltoniano (3), que lleva la función de onda desde su valor en la posición \(x'\) en el
+  instante inicial \(t'=0\) hasta su valor en la posición \(x\) al tiempo \(t\). Se han obtenido soluciones
+  analíticas para diversas elecciones tanto de la función \(\psi_{0}(x,k)\) como del potencial
+  dispersor \(V(x)\). Evaluando la ecuación (4) para el caso especial de propagación libre
+  (\(V(x)=0\)) de una onda plana truncada (\(\psi_{0}=e^{ikx}\)) se obtiene la solución analítica en
+  forma cerrada
+</p>
+
+<div class="ec" id="ec5">\[ \psi(x,k,t) = M(x,k,t), \tag{5} \]</div>
+
+<p>donde \(M\) es la función de Moshinsky, dada explícitamente por</p>
+
+<div class="ec" id="ec6">\[ M(x,k,t)=\frac{1}{2} \exp \left[i\left(k x-\frac{\hbar}{2 m} k^{2} t\right)\right] \operatorname{Erfc}\left(\frac{x-\frac{\hbar}{m} k t}{\sqrt{\frac{2 i \hbar t}{m}}}\right). \tag{6} \]</div>
+
+<p>
+  El factor exponencial en la ecuación (6) describe la propagación libre de onda plana que resultaría
+  de una función de onda inicial no restringida \(e^{ikx}\), mientras que la función error
+  complementaria codifica la supresión impuesta por el obturador, interpolando entre
+  \(|M|^{2}\approx 1\) muy por detrás del frente de onda clásico \(x_{\rm cl}(t) = (\hbar k/m)\,t\),
+  y \(|M|^{2}\approx 0\) muy por delante de él. La transición entre estos dos regímenes, cerca del
+  tiempo de llegada clásico \(t_{c}\equiv mx/(\hbar k)\), produce las oscilaciones temporales que
+  definen el fenómeno de difracción en el tiempo, y la densidad de probabilidad
+  \(|\psi(x,k,t)|^{2}=|M(x,k,t)|^{2}\) obtenida de la ecuación (5) exhibe explícitamente este
+  comportamiento.
+</p>
+
+<p>
+  La figura 1 muestra la densidad de probabilidad de una partícula \(|M(x,k,t)|^{2}\) como función
+  del tiempo en la posición fija \(x=30\) nm. La función de Moshinsky exacta se compara con el
+  escalón clásico \(\Theta(t-t_{c})\), donde \(t_{c}=mx/(\hbar k)\) es el tiempo de llegada clásico
+  del frente de onda a \(x\). La desviación entre ambas curvas hace explícito el fenómeno de
+  difracción en el tiempo: en lugar de encenderse abruptamente en \(t_{c}\), la densidad de
+  probabilidad cuántica desarrolla un ascenso suave, un sobrepaso y oscilaciones amortiguadas en
+  torno al valor asintótico de onda plana \(|M|^{2}\to 1\).
+</p>
+
+<figure id="fig1">
+  <img src="figuras/fig1.png" alt="Densidad de probabilidad de una partícula en función del tiempo: la curva cuántica sube suavemente, sobrepasa el valor 1 y oscila amortiguándose, mientras el escalón clásico salta de golpe en el tiempo de llegada.">
+  <figcaption>
+    <b>Figura 1.</b> Densidad de probabilidad de una partícula \(|M(x,k,t)|^{2}\) como función del
+    tiempo en la posición fija \(x=30\) nm, calculada a partir de la ecuación (6) (línea azul
+    continua). La línea negra discontinua muestra el escalón clásico \(\Theta(t-t_{c})\), con el
+    tiempo de llegada clásico \(t_{c}=mx/(\hbar k)\simeq 0.18\) ps señalado por la línea vertical
+    punteada. Las oscilaciones de la curva cuántica en torno al valor asintótico 1 constituyen el
+    patrón de difracción en el tiempo. Aquí \(k=\sqrt{2mE/\hbar^{2}}=1.449\times 10^{9}\,\mathrm{m}^{-1}\)
+    corresponde a \(E=0.08\) eV, con \(m=m_e\) empleada aquí únicamente como masa de referencia; la
+    estructura analítica de los resultados se escala a otras masas a través del cociente adimensional
+    \(t/t_c\).
+  </figcaption>
+</figure>
+</div>
+</details>
+
+<details class="sub" open data-clave="obturador-dos">
+<summary class="sub__cab"><h3 id="obturador-dos"><span class="sec-n">2.2</span>Obturador cuántico para un estado de dos partículas simetrizado por intercambio</h3><svg class="galon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5 12 15.5 18 9.5"/></svg></summary>
+<div class="sub__cuerpo">
+
+
+<p>Aquí nos ocupamos de la solución de la ecuación de Schrödinger dependiente del tiempo,</p>
+
+<div class="ec" id="ec7">\[ \left[i \hbar \frac{\partial}{\partial t}-H\right] \Psi(x_{1}, x_{2}, t)=0, \tag{7} \]</div>
+
+<p>para un estado inicial de dos partículas simetrizado por intercambio de la forma</p>
+
+<div class="ec" id="ec8">\[ \Psi_{0}(x_{1},x_{2}) = \frac{1}{\sqrt{2}}\left[\psi_{\alpha}(x_{1})\,\psi_{\beta}(x_{2}) \pm \psi_{\beta}(x_{1})\,\psi_{\alpha}(x_{2})\right]\Theta(-x_1)\,\Theta(-x_2), \tag{8} \]</div>
+
+<p>
+  donde \(\psi_{n}(x_{j})\equiv \psi(x_{j},k_n,0)\), con \(n=\alpha,\beta\) y \(j = 1,2\). El
+  producto \(\Theta(-x_1)\,\Theta(-x_2)\) confina el estado inicial de dos partículas al cuadrante
+  \(x_1\leq 0,\ x_2\leq 0\), en el cual ambos subsistemas están bloqueados por el obturador. El
+  factor \(1/\sqrt{2}\) es el prefactor de simetría convencional de la combinación (anti)simétrica de
+  dos modos. El hamiltoniano \(H\) del sistema es la suma \(H = H_1 + H_2\), donde cada \(H_j\) es de
+  la forma (3).
+</p>
+
+<p>
+  La solución dependiente del tiempo \(\Psi(x_{1}, x_{2}, t)\) de la ecuación (7), para el obturador
+  cuántico de dos partículas (8), puede escribirse en términos del propagador del sistema como
+</p>
+
+<div class="ec" id="ec9">\[ \Psi(x_{1},x_{2},t) = \int_{-\infty}^{\infty}\int_{-\infty}^{\infty} K(x_{1},x_{2},t|x_{1}',x_{2}',0)\,\Psi_0(x_{1}',x_{2}')\, dx_{1}'dx_{2}'. \tag{9} \]</div>
+
+<p>
+  Dado que las dos partículas no interactúan, el hamiltoniano es separable, \(H=H_1+H_2\), y el
+  propagador de dos partículas se factoriza en un producto de propagadores de una partícula,
+</p>
+
+<div class="ec">\[ K(x_1,x_2,t\mid x_1',x_2',0) = K(x_1,t\mid x_1',0)\,K(x_2,t\mid x_2',0). \]</div>
+
+<p>De aquí que la ecuación (9) pueda reescribirse como</p>
+
+<div class="ec" id="ec10">\[ \Psi(x_{1},x_{2},t) = \int_{-\infty}^{\infty}\int_{-\infty}^{\infty} K(x_{1},t|x_{1}',0)\,K(x_{2},t|x_{2}',0)\,\Psi_0(x_{1}',x_{2}')\, dx_{1}'dx_{2}'. \tag{10} \]</div>
+
+<p>
+  Además, puesto que las partículas son idénticas, \(H\) es simétrico bajo permutación de los índices
+  de partícula y por lo tanto conmuta con el operador de intercambio. Esto garantiza que la
+  (anti)simetría del estado inicial (8) se preserva durante la evolución temporal.
+</p>
+
+<p>La sustitución de (8) en (10) permite escribir la solución como</p>
+
+<div class="ec" id="ec11">\[ \begin{aligned}
+\Psi(x_{1}, x_{2}, t) &=\frac{1}{\sqrt{2}} \int_{-\infty}^{\infty} K(x_{1}, t \mid x_{1}', 0) \psi_{\alpha}(x_{1}') d x_{1}' \int_{-\infty}^{\infty} K(x_{2}, t \mid x_{2}', 0) \psi_{\beta}(x_{2}') d x_{2}' \\
+& \pm \frac{1}{\sqrt{2}} \int_{-\infty}^{\infty} K(x_{1}, t \mid x_{1}', 0) \psi_{\beta}(x_{1}') d x_{1}' \int_{-\infty}^{\infty} K(x_{2}, t \mid x_{2}', 0) \psi_{\alpha}(x_{2}') d x_{2}'
+\end{aligned} \tag{11} \]</div>
+
+<p>
+  A partir de la expresión (4), la solución (11) puede reescribirse en términos de soluciones del
+  obturador cuántico de una partícula como
+</p>
+
+<div class="ec" id="ec12">\[ \Psi(x_{1},x_{2},t) = \frac{1}{\sqrt{2}} \left[ \psi_\alpha(x_{1},t)\,\psi_\beta(x_{2},t) \pm \psi_\beta(x_{1},t)\,\psi_\alpha(x_{2},t) \right], \tag{12} \]</div>
+
+<p>
+  donde \(\psi_n(x,t) \equiv \psi(x, k_n, t)\) (\(n=\alpha,\beta\)), cada una siendo solución de la
+  ecuación de Schrödinger de una partícula (1). La función de onda de dos partículas
+  \(\Psi(x_{1},x_{2},t)\) queda así expresada como una combinación (anti)simétrica de las funciones
+  de onda de una partícula \(\psi_\alpha(x,t)\) y \(\psi_\beta(x,t)\).
+</p>
+
+<p>
+  Particularizamos ahora el formalismo al caso de ondas planas truncadas, eligiendo
+  \(\psi_{\alpha}(x_{j}, 0)=e^{i \alpha x_{j}}\) y \(\psi_{\beta}(x_{j}, 0)=e^{i \beta x_{j}}\),
+  donde, por simplicidad de notación, hacemos \(\alpha \equiv k_{\alpha}\) y
+  \(\beta \equiv k_{\beta}\). Así, las energías de incidencia son
+  \(E_{\alpha} = \hbar^2 \alpha^2/2m\) y \(E_{\beta} = \hbar^2 \beta^2/2m\). En ausencia de
+  potenciales dispersores, estas ondas planas truncadas están confinadas a la región \(x\leq 0\) por
+  un obturador colocado en \(x=0\). La apertura súbita del obturador en \(t=0\) permite la
+  propagación libre de la onda cuántica de dos partículas a lo largo de la región \(x>0\). En este
+  caso, los subsistemas tienen soluciones analíticas explícitas de la forma (5). Por lo tanto, la
+  función de onda dependiente del tiempo del sistema de dos partículas es de la forma
+</p>
+
+<div class="ec" id="ec13">\[ \Psi^{\pm}(x_{1}, x_{2},t)=\frac{1}{\sqrt{2}}\left[M(x_{1}, \alpha, t) M(x_2, \beta, t) \pm M(x_{1}, \beta, t) M(x_{2}, \alpha, t)\right], \tag{13} \]</div>
+
+<p>
+  donde el signo superior (inferior) corresponde al caso simétrico (antisimétrico) asociado a
+  partículas bosónicas (fermiónicas).
+</p>
+
+<p>
+  Para números de onda de incidencia \(\alpha,\beta>0\), la densidad de probabilidad conjunta en la
+  región transmitida \(x_1\geq 0,\ x_2\geq 0\), obtenida de la ecuación (13), es
+</p>
+
+<div class="ec" id="ec14">\[ \begin{aligned}
+\left|\Psi_{\alpha, \beta}^{\pm}(x_{1}, x_{2}, t)\right|^{2} &=\frac{1}{2}\left|M(x_{1}, \alpha, t) M(x_{2}, \beta, t)\right|^{2}+\frac{1}{2}\left|M(x_{1}, \beta, t) M(x_{2}, \alpha, t)\right|^{2} \\
+& \pm \Re\left[M(x_{1}, \alpha, t) M(x_{2}, \beta, t) M^{*}(x_{1}, \beta, t) M^{*}(x_{2}, \alpha, t)\right].
+\end{aligned} \tag{14} \]</div>
+
+<p>
+  Los dos primeros términos de la ecuación (14) son las contribuciones directas en las que la
+  partícula 1 se detecta en el modo \(\alpha\) en \(x_1\) y la partícula 2 en el modo \(\beta\) en
+  \(x_2\), y viceversa; el tercer término es la contribución de interferencia de intercambio, cuyo
+  signo distingue la combinación simétrica (\(+\)) de la antisimétrica (\(-\)). En lo que sigue,
+  \(|\Psi_{\alpha,\beta}^{\pm}(x_1,x_2,t)|^2\) se interpreta operacionalmente como una densidad de
+  detección conjunta en las posiciones \((x_1,x_2)\), en la línea de los experimentos de conteo de coincidencias del tipo Hanbury Brown–Twiss [7,5]. El contenido físico del análisis que sigue reside
+  en la estructura dependiente del tiempo y en el contraste relativo de las contribuciones simétrica
+  (\(+\)) y antisimétrica (\(-\)) de la ecuación (14). Las condiciones iniciales de onda plana
+  truncada del arreglo del obturador son idealizaciones propias de la teoría de dispersión, de modo que los
+  observables relevantes son las tasas de detección y no la norma de la función de onda en sí misma.
+</p>
+
+<p class="nota">
+  <b>Nota sobre la normalización.</b> La normalización global de
+  \(|\Psi_{\alpha,\beta}^{\pm}|^2\) no queda fijada por el estado inicial de onda plana truncada y no
+  posee significado físico por sí misma; solo los cocientes son independientes del prefactor
+  arbitrario. Las cantidades reportadas más adelante —en particular el contraste de detección
+  coincidente \(|\Psi_{\alpha,\alpha}^{+}(x,x,t)|^2/|M(x,\alpha,t)|^4=2\) y la modulación a tiempos
+  largos \(1\pm\cos(\Delta k\,\Delta x)\) alrededor del fondo de dos partículas— son invariantes bajo
+  un reescalamiento \(\Psi_0\to\lambda\Psi_0\) y constituyen por lo tanto los observables bien
+  definidos del modelo.
+</p>
+
+<p>
+  La ecuación (14) constituye el resultado analítico central del modelo y proporciona la base para el
+  estudio sistemático de los efectos transitorios desarrollado en la siguiente sección. En lo que
+  sigue analizaremos tres regímenes transitorios obtenidos al particularizar la ecuación (14) a:
+  (i) detección en posiciones coincidentes con números de onda idénticos, \(x_1=x_2\) y \(\alpha=\beta\);
+  (ii) detección coincidente con números de onda ligeramente desajustados, \(x_1=x_2\) y
+  \(\alpha\approx\beta\); y (iii) detección espacialmente separada con números de onda distintos,
+  \(x_1\ne x_2\) y \(\alpha\ne\beta\).
+</p>
+</div>
+</details>
+</div>
+</details>
+
+<details class="sec" open data-clave="transitorio">
+<summary class="sec__cab"><h2 id="transitorio"><span class="sec-n">3</span>Comportamiento transitorio de la solución de dos partículas</h2><svg class="galon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5 12 15.5 18 9.5"/></svg></summary>
+<div class="sec__cuerpo">
+<p>
+  Investigamos la dinámica transitoria de la densidad de probabilidad de dos partículas a través de
+  tres configuraciones representativas de propagación. El análisis comienza con la configuración
+  simétrica más simple, continúa relajando una de sus condiciones definitorias y considera finalmente
+  el caso completamente general en el que tanto las posiciones de detección como los números de onda
+  incidentes pueden diferir.
+</p>
+
+<details class="sub" open data-clave="caso-1">
+<summary class="sub__cab"><h3 id="caso-1"><span class="sec-n">3.1</span>Difracción en el tiempo realzada: caso \(x_1=x_2\), \(\alpha=\beta\)</h3><svg class="galon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5 12 15.5 18 9.5"/></svg></summary>
+<div class="sub__cuerpo">
+
+
+<p>
+  Con el fin de explorar los transitorios de dos partículas, comenzamos con el caso más simple, en el
+  que tanto las posiciones como los números de onda son iguales. En estas condiciones, la densidad
+  antisimétrica se anula exactamente, \(|\Psi_{\alpha,\alpha}^{-}(x,x,t)|^{2}=0\), de modo que el
+  análisis siguiente se centra en la densidad simétrica. La figura 2 muestra la densidad de
+  probabilidad \(|\Psi_{\alpha,\alpha}^{+}(x,x,t)|^{2}\) como función del tiempo para los valores de
+  parámetros indicados. En el presente caso, la densidad de probabilidad de dos partículas se reduce
+  al cuadrado de la densidad de probabilidad de una partícula, a saber,
+</p>
+
+<div class="ec" id="ec15">\[ \left|\Psi_{\alpha, \alpha}^{+}(x,x,t)\right|^{2}=2|M(x, \alpha, t)|^{4}. \tag{15} \]</div>
+
+<p>
+  Por lo tanto, hereda la estructura característica de <em>difracción en el tiempo</em> de la
+  dinámica de una partícula. El factor 2 se origina en la suma constructiva de las dos amplitudes
+  idénticas en la combinación simétrica de la ecuación (13) evaluada en detección coincidente. De
+  manera equivalente, el término de interferencia de intercambio se vuelve idéntico a la contribución
+  directa en lugar de anularse, de donde surge el factor 2 global. Este resultado concuerda con estudios previos de difracción de dos partículas e interferometría con redes de difracción, donde la
+  probabilidad de detección conjunta en posiciones coincidentes es proporcional a la cuarta potencia
+  del módulo de la función de onda de una partícula [8]. Aquí, la misma estructura surge en el
+  dominio temporal dentro de la dinámica transitoria del obturador cuántico.
+</p>
+
+<figure id="fig2">
+  <img src="figuras/fig2.png" alt="Densidad de probabilidad conjunta simétrica en detección coincidente: la curva exacta y la aproximación por funciones de Bessel se superponen casi perfectamente tras el tiempo de llegada clásico.">
+  <figcaption>
+    <b>Figura 2.</b> Densidad de probabilidad conjunta simétrica
+    \(|\Psi^{+}_{\alpha,\alpha}(x,x,t)|^{2}\) como función del tiempo para detección coincidente en
+    \(x=10.0\) nm con números de onda iguales \(\alpha=\beta=k_0\). La curva azul continua es el
+    resultado exacto dado por la ecuación (15); la curva naranja discontinua corresponde a la
+    aproximación por funciones de Bessel de la ecuación (23). El tiempo de llegada clásico
+    \(t_c=mx/(\hbar\alpha)\simeq0.06\) ps se indica mediante una flecha sobre el eje temporal. La
+    aproximación por funciones de Bessel se grafica únicamente para tiempos correspondientes a
+    valores de \(\gamma^2\) posteriores al primer cero de \(Y_0\), evitando así la singularidad
+    logarítmica de la representación asintótica en \(t=t_c\). El valor de referencia
+    \(k_0=1.449 \times 10^9\,\mathrm{m}^{-1}\) se obtiene de \(k_0=\sqrt{2 m E_0}/\hbar\), usando la
+    masa del electrón \(m=m_e\) y una energía de referencia arbitraria \(E_0=0.08\) eV.
+  </figcaption>
+</figure>
+
+<p>
+  Para comprender el origen de la dinámica transitoria, analizamos ahora las contribuciones
+  dominantes que subyacen a la solución exacta. La función de Moshinsky admite la expansión
+  asintótica [9]
+</p>
+
+<div class="ec" id="ec16">\[ M(y)\approx \frac{1}{2}e^{imx^{2}/2\hbar t} \left[ 2e^{y^{2}} -\frac{1}{\sqrt{\pi}\,y} +\frac{1}{\sqrt{\pi}\,y^{3}} +\cdots \right], \tag{16} \]</div>
+
+<p>la cual es válida en el sector \(\pi/2<\arg(y)<3\pi/2\) del plano complejo \(y\), con</p>
+
+<div class="ec" id="ec17">\[ y\equiv e^{-i\pi/4} \left(\frac{m}{2\hbar t}\right)^{1/2} \left( x-\frac{\hbar q}{m}t \right). \tag{17} \]</div>
+
+<p>
+  A partir de la definición (17), la condición \(\pi/2<\arg(y)<3\pi/2\) es equivalente a \(t>t_c\),
+  donde \(t_c\) denota el tiempo de llegada clásico
+</p>
+
+<div class="ec" id="ec18">\[ t_c(x, q) \equiv \frac{m x}{\hbar q}. \tag{18} \]</div>
+
+<p>
+  Si se conserva la contribución exponencial junto con la corrección no exponencial dominante de orden
+  \(1/\gamma\), y despreciando términos de orden \(1/\gamma^3\) y superiores, que se vuelven
+  progresivamente más pequeños conforme \(|\gamma|\) aumenta, se obtiene la siguiente aproximación
+  para la función de Moshinsky,
+</p>
+
+<div class="ec" id="ec19">\[ M(x, q, t) \approx \frac{1}{2} e^{i m x^{2} / 2 \hbar t}\left[2 e^{-i \gamma^{2}}+\frac{e^{i \pi / 4}}{\sqrt{\pi} \gamma}\right], \tag{19} \]</div>
+
+<p>con</p>
+
+<div class="ec" id="ec20">\[ \gamma\equiv \left(\frac{m}{2\hbar t}\right)^{1/2} \left( x-\frac{\hbar q}{m}t \right). \tag{20} \]</div>
+
+<p>
+  Sustituyendo la ecuación (19) en la ecuación (15) para el caso \(q=\alpha\), y conservando únicamente la corrección dominante de orden \(1/\gamma\) en \(|M|^2\), se obtiene
+</p>
+
+<div class="ec" id="ec21">\[ \left|\Psi_{\alpha, \alpha}^{+}(x,x,t)\right|^{2} \approx 2\left[1 +\frac{\cos \left(\gamma^{2}+\frac{\pi}{4}\right)}{\sqrt{\pi} \gamma} \right]^2 \Theta(t-t_c), \tag{21} \]</div>
+
+<p>donde \(\Theta\) denota la función escalón de Heaviside.</p>
+
+<p>
+  Dado que \(t>t_c\), la ecuación (20) implica que \(\gamma<0\), lo que permite escribir
+  \(1/\gamma\) como \(-1/|\gamma|\). Usando además la identidad
+  \(\cos(\gamma^{2}+\pi/4)=-\sin(\gamma^{2}-\pi/4)\), la ecuación (21) se convierte en
+</p>
+
+<div class="ec" id="ec22">\[ \left|\Psi_{\alpha, \alpha}^{+}(x,x,t)\right|^{2} \approx 2\left[1 +\frac{\sin \left(\gamma^{2}-\frac{\pi}{4}\right)}{\sqrt{\pi} |\gamma|} \right]^2 \Theta(t-t_c). \tag{22} \]</div>
+
+<p>
+  El término entre corchetes puede reconocerse como la forma asintótica de la función de Bessel de
+  segunda especie,
+</p>
+
+<div class="ec">\[ Y_0(u)\approx\sqrt{\frac{2}{\pi u}}\sin\!\left(u-\frac{\pi}{4}\right). \]</div>
+
+<p>Haciendo \(u=\gamma^2\), de modo que \(\sqrt{u}=|\gamma|\), la ecuación (22) toma la forma</p>
+
+<div class="ec" id="ec23">\[ \left|\Psi_{\alpha, \alpha}^{+}(x,x,t)\right|^{2} \approx 2\left[1 + \frac{1}{\sqrt{2}}Y_0(\gamma^2)\right]^2\Theta(t-t_c). \tag{23} \]</div>
+
+<p>
+  La figura 2 compara la densidad de probabilidad conjunta exacta, ecuación (15), con la aproximación
+  por funciones de Bessel, ecuación (23). Dado que \(Y_0(u)\) diverge logarítmicamente cuando
+  \(u\rightarrow0\), la ecuación (23) no pretende describir la vecindad inmediata del tiempo de
+  llegada clásico \(t_c\), donde \(\gamma=0\) y la densidad exacta permanece finita. En consecuencia,
+  la aproximación de Bessel se grafica únicamente para tiempos correspondientes a valores de
+  \(\gamma^2\) posteriores al primer cero de \(Y_0(\gamma^2)\), el cual ocurre poco después de
+  \(t_c\).
+</p>
+
+<p>
+  Fuera de esta estrecha región, la concordancia entre los resultados aproximado y exacto es notablemente buena. La representación de Bessel reproduce con precisión no solo las posiciones de los máximos y
+  mínimos sucesivos, sino también sus amplitudes y el decaimiento global de las oscilaciones de
+  difracción en el tiempo a lo largo de toda la evolución transitoria. Esta excelente concordancia muestra
+  que el término no exponencial dominante de el desarrollo de Moshinsky captura ya la dinámica
+  esencial de difracción en el tiempo del transitorio.
+</p>
+
+<p>
+  La identificación de las contribuciones asintóticas dominantes conduce así, de forma natural, a una representación compacta en términos de funciones de Bessel. Como se hará evidente enseguida, esta
+  representación proporciona un marco analítico conveniente para las configuraciones transitorias más
+  generales.
+</p>
+</div>
+</details>
+
+<details class="sub" open data-clave="caso-2">
+<summary class="sub__cab"><h3 id="caso-2"><span class="sec-n">3.2</span>Difracción en el tiempo modulada por batidos: caso \(x_1=x_2\), \(\alpha \approx \beta\)</h3><svg class="galon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5 12 15.5 18 9.5"/></svg></summary>
+<div class="sub__cuerpo">
+
+
+<p>
+  La situación cambia por completo en cuanto los números de onda dejan de ser iguales.
+  Consideremos el caso en que los números de onda difieren solo ligeramente. Esta situación se
+  ilustra en la figura 3, donde \(x_1=x_2\) pero \(\alpha\approx\beta\). Las oscilaciones de
+  difracción en el tiempo ya no se observan como una estructura transitoria aislada; en cambio,
+  quedan inmersas en un patrón de batidos producido por la interferencia de los dos modos
+  incidentes cercanos.
+</p>
+
+<p>
+  Nótese que, en puntos de detección coincidentes \(x_1=x_2\equiv x\), la densidad antisimétrica se
+  anula idénticamente para cualesquiera \(\alpha,\beta\), \(|\Psi^-_{\alpha,\beta}(x,x,t)|^2=0\),
+  como consecuencia directa de la antisimetría de intercambio en coordenadas iguales. En
+  consecuencia, el análisis a lo largo de esta subsección se restringe a la densidad simétrica.
+</p>
+
+<h4 id="bessel-2">Representación en funciones de Bessel</h4>
+
+<p>
+  Sustituyendo las soluciones de onda plana truncada en la ecuación (14) en detección coincidente
+  \(x_1=x_2\equiv x\), obtenemos
+</p>
+
+<div class="ec" id="ec24">\[ \left|\Psi^{+}_{\alpha, \beta}(x, x, t)\right|^{2}=2|M(x, \alpha, t) M(x, \beta, t)|^{2}. \tag{24} \]</div>
+
+<figure id="fig3">
+  <img src="figuras/fig3.png" alt="Densidad conjunta simétrica con números de onda ligeramente distintos: las oscilaciones rápidas quedan moduladas por una envolvente lenta que produce un patrón de batidos.">
+  <figcaption>
+    <b>Figura 3.</b> Lo mismo que en la figura 2 para \(x_{1}=x_{2}=10.0\) nm y números de onda
+    ligeramente desajustados, \(\alpha = 1.9 k_0\), \(\beta = 2.0 k_0\). La línea azul continua es la
+    densidad exacta obtenida de la ecuación (24), y la línea naranja discontinua es la aproximación
+    por funciones de Bessel dada por la ecuación (26). El tiempo de llegada clásico
+    \(t_c=mx/(\hbar\alpha)\simeq 0.03\) ps se señala mediante la pequeña flecha. Siguiendo la
+    convención adoptada en la figura 2, la aproximación por funciones de Bessel se grafica a partir
+    del primer cero de cada función \(Y_0(\gamma^2)\).
+  </figcaption>
+</figure>
+
+<p>
+  El enfoque desarrollado en la subsección anterior se extiende sin dificultad al presente caso. Dado que las expresiones asintóticas son válidas solo después de ambos frentes de llegada
+  clásicos, definimos
+</p>
+
+<div class="ec">\[ t_c=\max\{t_{c,\alpha},t_{c,\beta}\}, \]</div>
+
+<p>
+  donde \(t_{c,k}=mx/(\hbar k)\) para \(k=\alpha,\beta\). Procediendo como antes, sustituimos la
+  ecuación (19) en la ecuación (24), donde \(\gamma_\alpha\) y \(\gamma_\beta\) denotan las
+  cantidades definidas por la ecuación (20) evaluadas en \(q=\alpha\) y \(q=\beta\),
+  respectivamente. Conservando las contribuciones dominantes y despreciando el término mixto de orden
+  \(1/(\gamma_\alpha \gamma_\beta)\), que decae como \(1/t\), obtenemos
+</p>
+
+<div class="ec" id="ec25">\[ \left|\Psi_{\alpha, \beta}^{+}(x,x,t)\right|^{2} \approx \frac{2}{\sqrt{\pi} \gamma_{\alpha}}\left[\sqrt{\pi} \gamma_{\alpha}+\cos \left(\gamma_{\alpha}^{2}+\frac{\pi}{4}\right)+\Gamma_{\alpha, \beta} \cos \left(\gamma_{\beta}^{2}+\frac{\pi}{4}\right)\right]\Theta(t-t_c). \tag{25} \]</div>
+
+<p>
+  Los dos términos oscilatorios de la ecuación (25) coinciden con la forma asintótica dominante de la
+  función de Bessel de segunda especie. Motivados por esta observación, reemplazamos sus formas
+  asintóticas por las funciones de Bessel exactas correspondientes, lo que conduce a la
+  representación compacta
+</p>
+
+<div class="ec" id="ec26">\[ \left|\Psi_{\alpha,\beta}^{+}(x,x,t)\right|^2 \approx \left[ 2+\sqrt{2}\left( Y_0(\gamma_\alpha^2)+Y_0(\gamma_\beta^2) \right) \right] \Theta(t-t_c). \tag{26} \]</div>
+
+<p>
+  La ecuación (26) proporciona una representación compacta de la densidad de probabilidad conjunta en
+  términos de únicamente dos funciones de Bessel. Su comparación con el resultado exacto se muestra
+  en la figura 3. La concordancia entre ambas curvas es notable a lo largo de casi todo el régimen
+  transitorio. Llama la atención que la ecuación (26), aunque motivada únicamente
+  por el comportamiento de \(|\gamma|\) grande de la función de Moshinsky, sigue siendo muy precisa
+  mucho más allá del régimen estrictamente asintótico.
+</p>
+
+<h4 id="beats">Interpretación analítica de la dinámica de batidos</h4>
+
+<p>
+  Para profundizar en el origen del patrón de batidos, analizamos ahora la estructura de la ecuación
+  (25). Para números de onda casi iguales, \(\alpha\approx\beta\), se tiene
+  \(\Gamma_{\alpha,\beta}\approx1\), lo que permite reescribir la ecuación (25) como el producto de
+  una envolvente que varía lentamente y una componente que oscila rápidamente,
+</p>
+
+<div class="ec" id="ec27">\[ \begin{aligned}
+\left|\Psi_{\alpha,\beta}^{+}(x,x,t)\right|^{2} &\approx
+\left[2+\frac{4}{\sqrt{\pi}\gamma_{\alpha}}
+\cos\!\left(\frac{\gamma_{\alpha}^{2}-\gamma_{\beta}^{2}}{2}\right)
+\cos\!\left(\frac{\gamma_{\alpha}^{2}+\gamma_{\beta}^{2}}{2}+\frac{\pi}{4}\right)
+\right]\Theta(t-t_c) \\
+&\equiv
+\left[2+\frac{4}{\sqrt{\pi}\gamma_{\alpha}}
+\cos\Phi^{-}(x,t)\cos\Phi^{+}(x,t)
+\right]\Theta(t-t_c),
+\end{aligned} \tag{27} \]</div>
+
+<p>donde</p>
+
+<div class="ec" id="ec28">\[ \Phi^{-}(x,t)=\Omega^{-}t-K^{-}x, \tag{28} \]</div>
+
+<p>y</p>
+
+<div class="ec" id="ec29">\[ \Phi^{+}(x,t)=\Omega^{+}t-K^{+}x+\frac{mx^{2}}{2\hbar t}+\frac{\pi}{4}. \tag{29} \]</div>
+
+<p>Los parámetros</p>
+
+<div class="ec" id="ec30">\[ \Omega^{-}=\frac{1}{2}\frac{E_{\alpha}-E_{\beta}}{\hbar}, \qquad \Omega^{+}=\frac{1}{2}\frac{E_{\alpha}+E_{\beta}}{\hbar}, \tag{30} \]</div>
+
+<p>
+  representan, respectivamente, la frecuencia angular de la modulación lenta de la envolvente y la de
+  la componente que oscila rápidamente. Aquí
+</p>
+
+<div class="ec" id="ec31">\[ E_{\alpha}=\frac{\hbar^{2}\alpha^{2}}{2m}, \qquad E_{\beta}=\frac{\hbar^{2}\beta^{2}}{2m}, \tag{31} \]</div>
+
+<p>son las energías incidentes asociadas a los números de onda \(\alpha\) y \(\beta\). Las cantidades</p>
+
+<div class="ec" id="ec32">\[ K^{-}=\frac{1}{2}(\alpha-\beta), \qquad K^{+}=\frac{1}{2}(\alpha+\beta), \tag{32} \]</div>
+
+<p>
+  representan los números de onda efectivos asociados a la envolvente lenta y a la onda de oscilación
+  rápida, respectivamente. La ecuación (27) exhibe por lo tanto la estructura característica de un
+  patrón de batidos: un término de oscilación rápida gobernado por \(\Omega^{+}\), modulado por una
+  envolvente de variación lenta determinada por la diferencia de energía entre los dos modos
+  incidentes.
+</p>
+
+<p>
+  Conviene advertir, sin embargo, que la fase \(\Phi^{+}(x,t)\) contiene dos contribuciones
+  adicionales, \(mx^{2}/(2\hbar t)\) y \(\pi/4\), que no aparecen en la descripción estándar de
+  batidos entre ondas planas. El término cuadrático \(mx^{2}/(2\hbar t)\) se origina en la estructura
+  asintótica de la función de Moshinsky y representa una contribución transitoria de difracción
+  análoga a la <em>fase de Fresnel</em> cuadrática que aparece en óptica ondulatoria. Dado que este
+  término se cancela en la diferencia \(\Phi^{-}(x,t)\), no afecta la modulación lenta de la
+  envolvente, pero sobrevive en \(\Phi^{+}(x,t)\), donde modifica la fase de la componente
+  oscilatoria rápida, particularmente a tiempos moderadamente cortos. El corrimiento de fase
+  constante \(\pi/4\) surge de la misma estructura asintótica.
+</p>
+
+<p>
+  En consecuencia, si bien la ecuación (27) muestra claramente el patrón de batidos usual generado
+  por la interferencia de dos modos cercanos, las oscilaciones rápidas conservan una firma de la
+  dinámica transitoria de difracción subyacente a la evolución del obturador cuántico. Cuando
+  \(t\rightarrow\infty\), la fase cuadrática \(mx^{2}/(2\hbar t)\) se desvanece gradualmente, y la
+  ecuación (27) se reduce asintóticamente al conocido patrón de batidos de dos ondas planas con
+  números de onda \(\alpha\) y \(\beta\).
+</p>
+</div>
+</details>
+
+<details class="sub" open data-clave="caso-3">
+<summary class="sub__cab"><h3 id="caso-3"><span class="sec-n">3.3</span>Fluctuaciones intensas: caso \(x_1 \ne x_2\), \(\alpha \ne \beta\)</h3><svg class="galon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5 12 15.5 18 9.5"/></svg></summary>
+<div class="sub__cuerpo">
+
+
+<p>
+  Pasamos ahora al caso más general \(x_1 \neq x_2\) y \(\alpha \neq \beta\). En contraste con los
+  casos de detección coincidente analizados antes, donde la amplitud antisimétrica se anula
+  idénticamente, ambas simetrías de intercambio contribuyen ahora de manera no trivial a la densidad
+  de probabilidad conjunta. Como resultado, la dinámica transitoria se vuelve considerablemente más
+  rica y revela características que están ausentes cuando \(x_1=x_2\).
+</p>
+
+<p>
+  La figura 4 presenta las densidades de probabilidad conjunta simétrica y antisimétrica en paneles
+  separados, lo que permite una comparación directa de su evolución transitoria. Aparecen varios rasgos nuevos, incluyendo la aparición de una meseta intermedia, fluctuaciones intensas a
+  tiempos largos y una pronunciada alternancia entre las densidades de probabilidad simétrica y
+  antisimétrica.
+</p>
+
+<figure id="fig4">
+  <img src="figuras/fig4.png" alt="Rejilla de paneles: evolución temporal de las densidades conjuntas simétrica y antisimétrica para varias posiciones del segundo detector, mostrando la meseta intermedia y la alternancia entre ambas simetrías.">
+  <figcaption>
+    <b>Figura 4.</b> Evolución temporal de la densidad de probabilidad conjunta para dos partículas
+    simetrizadas por intercambio con \(\alpha = k_0\), \(\beta = 2k_0\), \(x_1=10.0\) nm, y los
+    valores de \(x_2\) indicados en cada gráfica (en nm). El panel izquierdo muestra la densidad
+    simétrica, obtenida de la ecuación (14) con el signo más, y el panel derecho la densidad
+    antisimétrica, obtenida con el signo menos. Los fondos sombreados indican los tres regímenes
+    temporales discutidos en el texto.
+  </figcaption>
+</figure>
+
+<p>
+  Una inspección visual de las gráficas revela la existencia de tres regímenes temporales claramente
+  distinguibles. Como guía visual, los regímenes intermedio y de tiempos largos se resaltan en la
+  figura 4 mediante fondos sombreados en gris y verde, respectivamente. En el intervalo inicial
+  (desde \(t=0\) hasta aproximadamente \(2\times10^{-12}\,\mathrm{s}\)) la densidad de probabilidad
+  conjunta permanece despreciable en la escala de la gráfica, tanto para el caso simétrico como para
+  el antisimétrico. A esto le sigue un régimen intermedio, que abarca aproximadamente el intervalo
+  entre \(2\times10^{-12}\,\mathrm{s}\) y \(4\times10^{-12}\,\mathrm{s}\), caracterizado por una
+  pequeña meseta en el centro. Finalmente, a tiempos posteriores emerge un tercer régimen
+  caracterizado por fluctuaciones intensas de la densidad de probabilidad.
+</p>
+
+<p>
+  Conforme \(x_2\) aumenta de \(660.4\) nm a \(664.7\) nm, la densidad de probabilidad simétrica
+  evoluciona gradualmente de un máximo pronunciado a un mínimo y de vuelta a un máximo. La densidad
+  antisimétrica sigue la tendencia complementaria, alcanzando su máximo siempre que la densidad
+  simétrica se minimiza, y viceversa. En conjunto, ambos paneles revelan una clara alternancia entre
+  los comportamientos simétrico y antisimétrico conforme se varía la posición de detección.
+</p>
+
+<h4 id="activacion">Activación secuencial y el régimen de meseta</h4>
+
+<p>
+  Para comprender el origen de estas características, conviene descomponer la densidad de
+  probabilidad conjunta de la ecuación (14) en tres contribuciones,
+</p>
+
+<div class="ec" id="ec33">\[ \left|\Psi_{\alpha,\beta}^{\pm}(x_1,x_2,t)\right|^{2} = D_{\alpha\beta}(x_1,x_2,t) + D_{\beta\alpha}(x_1,x_2,t) \pm I_{\alpha\beta}(x_1,x_2,t), \tag{33} \]</div>
+
+<p>donde las dos contribuciones directas son</p>
+
+<div class="ec" id="ec34">\[ \begin{aligned}
+D_{\alpha\beta}(x_1,x_2,t) &\equiv \tfrac{1}{2}\,\left|M(x_1,\alpha,t)\,M(x_2,\beta,t)\right|^{2}, \\
+D_{\beta\alpha}(x_1,x_2,t) &\equiv \tfrac{1}{2}\,\left|M(x_1,\beta,t)\,M(x_2,\alpha,t)\right|^{2},
+\end{aligned} \tag{34} \]</div>
+
+<p>y el término de interferencia de intercambio es</p>
+
+<div class="ec" id="ec35">\[ I_{\alpha\beta}(x_1,x_2,t) \equiv \Re\!\left[\,M(x_1,\alpha,t)\,M(x_2,\beta,t)\, M^{*}(x_1,\beta,t)\,M^{*}(x_2,\alpha,t)\,\right]. \tag{35} \]</div>
+
+<p>
+  Dado que \(M(x,k,t)\) se vuelve apreciable solo después del tiempo de llegada
+  \(t_c=mx/(\hbar k)=x/v_k\), las dos contribuciones directas \(D_{\alpha\beta}\) y
+  \(D_{\beta\alpha}\) tienen tiempos de activación distintos, dados respectivamente por
+</p>
+
+<div class="ec" id="ec36">\[ t^{\alpha\beta}_{\mathrm a} = \max\left\{ \frac{x_1}{v_\alpha}, \frac{x_2}{v_\beta} \right\}, \qquad t^{\beta\alpha}_{\mathrm a} = \max\left\{ \frac{x_1}{v_\beta}, \frac{x_2}{v_\alpha} \right\}. \tag{36} \]</div>
+
+<p>
+  Para los parámetros correspondientes al caso \(x_2=660.4\,\mathrm{nm}\) de la figura 4, la ecuación
+  (36) se reduce a
+</p>
+
+<div class="ec" id="ec37">\[ t_{\mathrm a}^{\alpha\beta}= \frac{x_2}{v_\beta} \simeq 1.96\times10^{-12}\,\mathrm{s}, \qquad t_{\mathrm a}^{\beta\alpha}= \frac{x_2}{v_\alpha} \simeq 3.93\times10^{-12}\,\mathrm{s}. \tag{37} \]</div>
+
+<p>
+  Así, \(D_{\alpha\beta}\) se activa primero, mientras que \(D_{\beta\alpha}\) se vuelve apreciable
+  solo a tiempos posteriores. La meseta central observada en la figura 4 se extiende aproximadamente
+  sobre el intervalo \(\left(t_{\mathrm a}^{\alpha\beta}, t_{\mathrm a}^{\beta\alpha}\right)\).
+  Aunque las estimaciones anteriores corresponden al caso \(x_2=660.4\,\mathrm{nm}\), la variación de
+  \(x_2\) a lo largo del conjunto de curvas es pequeña, de modo que la meseta central aparece dentro
+  de aproximadamente la misma ventana temporal para todas las curvas mostradas; este intervalo común
+  se indica mediante la región sombreada en gris. En este intervalo, solo la contribución
+  \(D_{\alpha\beta}\) es apreciable, de modo que
+</p>
+
+<div class="ec" id="ec38">\[ |\Psi_{\alpha,\beta}^{+}(x_1,x_2,t)|^{2} \simeq |\Psi_{\alpha,\beta}^{-}(x_1,x_2,t)|^{2} \simeq D_{\alpha\beta}(x_1,x_2,t), \tag{38} \]</div>
+
+<p>
+  lo que explica por qué las densidades de probabilidad simétrica y antisimétrica son casi
+  indistinguibles a lo largo de toda la región de meseta.
+</p>
+
+<p>
+  La meseta corresponde a un régimen intermedio en el que las dos funciones de Moshinsky que entran
+  en \(D_{\alpha\beta}\) se encuentran en etapas distintas de su evolución. Para cuando se forma la
+  meseta, \(M(x_1,\alpha,t)\) ha alcanzado esencialmente su valor asintótico, mientras que
+  \(M(x_2,\beta,t)\) apenas se ha vuelto apreciable y aún exhibe oscilaciones de difracción en el
+  tiempo. Puesto que \(D_{\alpha\beta}\) contiene el prefactor \(1/2\) [cf. ecuación (34)] y
+  \(|M(x,k,t)|^2 \rightarrow 1\) asintóticamente, la meseta se desarrolla en torno al valor
+  \(D_{\alpha\beta}\approx1/2\). Pequeñas oscilaciones permanecen superpuestas sobre este fondo como
+  firma de la dinámica transitoria de difracción en el tiempo de la función de Moshinsky
+  \(M(x_2,\beta,t)\) recién activada. La meseta debe considerarse por lo tanto no como un régimen
+  estacionario, sino como una estructura transitoria de difracción en el tiempo asociada a la llegada
+  secuencial de las dos componentes del frente de onda.
+</p>
+
+<h4 id="modulacion">Interferencia de intercambio y modulación espacial</h4>
+
+<p>
+  Las figuras 5 y 6 muestran por separado las tres contribuciones que entran en la ecuación (33),
+  lo que aclara cómo su acumulación secuencial conduce de la meseta al régimen de fluctuaciones, y la
+  subsecuente distinción entre las densidades de probabilidad simétrica y antisimétrica. El papel de
+  las contribuciones directas se ilustra primero en el panel intermedio de la figura 5, donde la suma
+  \(D_{\alpha\beta}+D_{\beta\alpha}\) exhibe una estructura característica de dos escalones. El
+  primer escalón corresponde a la activación de \(D_{\alpha\beta}\) y da lugar a la meseta discutida
+  arriba, mientras que el segundo marca la activación de \(D_{\beta\alpha}\). Una vez activa,
+  \(D_{\beta\alpha}\) desarrolla su propia estructura de difracción en el tiempo y se aproxima al
+  mismo valor asintótico que \(D_{\alpha\beta}\). Puesto que ambas contribuciones contienen el
+  prefactor \(1/2\) y cada una tiende asintóticamente a la unidad en los factores de Moshinsky
+  correspondientes, su suma se aproxima a
+</p>
+
+<div class="ec">\[ D_{\alpha\beta}+D_{\beta\alpha}\rightarrow1, \qquad (t\rightarrow\infty), \]</div>
+
+<p>
+  lo que fija el nivel de referencia en torno al cual se desarrolla la dinámica de interferencia de
+  intercambio a tiempos largos.
+</p>
+
+<figure id="fig5">
+  <img src="figuras/fig5.png" alt="Tres paneles apilados: densidades totales simétrica y antisimétrica, contribuciones directas y término de interferencia de intercambio, este último positivo.">
+  <figcaption>
+    <b>Figura 5.</b> Panel superior: densidades de probabilidad conjunta totales simétrica (línea
+    azul) y antisimétrica (línea roja) para el caso \(x_2=660.4\) nm de la figura 4. Panel
+    intermedio: contribuciones directas \(D_{\alpha\beta}\) (línea azul) y \(D_{\beta\alpha}\)
+    (línea naranja) [ecuación (34)]. Panel inferior: término de interferencia de intercambio
+    \(I_{\alpha\beta}\) [ecuación (35)]. En este caso el término de interferencia es positivo, con
+    \(|\Psi_{\alpha,\beta}^{+}|^2\) en un máximo y \(|\Psi_{\alpha,\beta}^{-}|^2\) en un mínimo en el
+    régimen de fluctuaciones. El tiempo se da en segundos.
+  </figcaption>
+</figure>
+
+<figure id="fig6">
+  <img src="figuras/fig6.png" alt="Las mismas tres contribuciones para otra posición del segundo detector: ahora el término de interferencia es negativo y los papeles de las densidades simétrica y antisimétrica se invierten.">
+  <figcaption>
+    <b>Figura 6.</b> Las mismas contribuciones que en la figura 5, ahora para el caso
+    \(x_2=662.5\) nm de la figura 4. En este caso el término de interferencia es negativo, lo que
+    conduce a un intercambio de los papeles de las densidades de probabilidad simétrica y
+    antisimétrica: \(|\Psi_{\alpha,\beta}^{+}|^2\) alcanza un mínimo, mientras que
+    \(|\Psi_{\alpha,\beta}^{-}|^2\) alcanza su valor máximo en el régimen de fluctuaciones.
+  </figcaption>
+</figure>
+
+<p>
+  Antes de que \(I_{\alpha\beta}\) se vuelva apreciable, las densidades de probabilidad conjunta
+  simétrica y antisimétrica permanecen casi indistinguibles. Aunque los estados cuánticos subyacentes
+  ya poseen simetría de intercambio distinta, esta diferencia aún no se refleja en la probabilidad de
+  detección conjunta. Solo después de la activación de \(I_{\alpha\beta}\) la densidad de
+  probabilidad conjunta se vuelve experimentalmente sensible a la simetría de intercambio, dando
+  lugar a la separación de las densidades simétrica y antisimétrica y a la pronunciada modulación
+  espacial observada en la figura 4.
+</p>
+
+<p>
+  Establecido ya el fondo directo, consideramos ahora la activación de la contribución de
+  interferencia de intercambio. Puesto que \(I_{\alpha\beta}(x_1,x_2,t)\) contiene cuatro funciones
+  de Moshinsky, se vuelve apreciable solo después del último de los cuatro frentes de llegada,
+</p>
+
+<div class="ec" id="ec39">\[ t_{\mathrm a}^{I} = \max\left\{ \frac{x_1}{v_\alpha}, \frac{x_1}{v_\beta}, \frac{x_2}{v_\alpha}, \frac{x_2}{v_\beta} \right\}, \tag{39} \]</div>
+
+<p>
+  donde \(v_q=\hbar q/m\) para \(q=\alpha,\beta\). En la subsección anterior, donde \(x_1=x_2\) y
+  \(\alpha\approx\beta\), los cuatro tiempos de llegada que entran en la ecuación (39) casi
+  coinciden, de modo que las contribuciones correspondientes se vuelven apreciables casi
+  simultáneamente. En el presente caso, sin embargo, las condiciones \(x_1\neq x_2\) y
+  \(\alpha\neq\beta\) producen una separación pronunciada entre los frentes de llegada. Para los
+  parámetros de la figura 4, la ecuación (39) da
+  \(t_{\mathrm a}^{I}=t_{\mathrm a}^{\beta\alpha}\). El inicio de la contribución de interferencia de
+  intercambio marca por lo tanto la transición de la meseta al régimen fuertemente modulado, ya que
+  solo a partir de este punto las densidades de probabilidad simétrica y antisimétrica comienzan a
+  diferir.
+</p>
+
+<p>
+  Este comportamiento se ilustra en los paneles inferiores de las figuras 5 y 6. En ambos casos la
+  contribución de interferencia de intercambio permanece despreciable antes de \(t_{\mathrm a}^{I}\)
+  y posteriormente se desarrolla a través de un transitorio característico de difracción en el
+  tiempo. Su signo asintótico, sin embargo, depende de la posición del detector: se aproxima a
+  \(+1\) en la figura 5 y a \(-1\) en la figura 6. Como las contribuciones directas ya han
+  establecido un fondo cercano a la unidad, el término de interferencia de intercambio actúa
+  realzando o suprimiendo ese fondo según su signo. Un \(I_{\alpha\beta}\) positivo realza la
+  densidad simétrica hacia \(2\) y casi suprime la antisimétrica, mientras que un
+  \(I_{\alpha\beta}\) negativo intercambia estos papeles. Así, el mecanismo de activación es el mismo
+  en ambos casos; la diferencia cualitativa entre las densidades simétrica y antisimétrica queda
+  determinada únicamente por el signo de la contribución de interferencia de intercambio.
+</p>
+
+<p>
+  La modulación espacial puede entenderse analíticamente reteniendo únicamente la contribución
+  exponencial en el desarrollo asintótico de la función de Moshinsky. De la ecuación (19), esto da
+</p>
+
+<div class="ec" id="ec40">\[ M(x,k,t) \approx \exp\!\left[i\left(\frac{mx^2}{2\hbar t}-\gamma_k^2\right)\right]. \tag{40} \]</div>
+
+<p>
+  Sustituyendo esta aproximación en la ecuación (35), las contribuciones de fase cuadrática se cancelan exactamente, dejando una expresión que depende únicamente de la combinación
+  \((\alpha-\beta)(x_1-x_2)\):
+</p>
+
+<div class="ec" id="ec41">\[ I_{\alpha\beta}(x_1,x_2,t) \approx \cos\!\left[(\alpha-\beta)(x_1-x_2)\right]. \tag{41} \]</div>
+
+<p>
+  Dado que cada contribución directa tiende a \(1/2\), su suma
+  \(D_{\alpha\beta}+D_{\beta\alpha}\) establece un fondo unitario. Con el término de interferencia de
+  intercambio activándose en \(t_{\mathrm a}^{I}\), la densidad de probabilidad conjunta puede
+  escribirse, dentro de esta aproximación, como
+</p>
+
+<div class="ec" id="ec42">\[ \left|\Psi_{\alpha,\beta}^{\pm}(x_1,x_2,t)\right|^2 \approx 1\pm \Theta\!\left(t-t_{\mathrm a}^{I}\right) \cos\!\left[(\alpha-\beta)(x_1-x_2)\right]. \tag{42} \]</div>
+
+<p>
+  Introduciendo \(\Delta k=\beta-\alpha\) y \(\Delta x=x_2-x_1\), y tomando el límite de tiempos
+  largos, la ecuación (42) se reduce a
+</p>
+
+<div class="ec" id="ec43">\[ \left|\Psi_{\alpha,\beta}^{\pm}(x_1,x_2,t)\right|^2 \;\xrightarrow[t\to\infty]{}\; 1\pm\cos\!\left(\Delta k\,\Delta x\right). \tag{43} \]</div>
+
+<p>
+  Esta expresión oscila entre \(0\) y \(2\), con los casos simétrico y antisimétrico desfasados en
+  \(\pi\). Así, la ecuación (43) muestra que la modulación espacial surge de la contribución de
+  interferencia de intercambio superpuesta al fondo unitario establecido por las dos contribuciones
+  directas.
+</p>
+
+<p>
+  Variar \(x_2\) con \(x_1\) fijo desplaza por lo tanto la fase de intercambio, alternando entre
+  interferencia constructiva y destructiva para las densidades simétrica y antisimétrica. El periodo
+  espacial de esta modulación es
+</p>
+
+<div class="ec" id="ec44">\[ \Delta x^{(\mathrm{ciclo})} = \frac{2\pi}{|\alpha-\beta|} = \frac{2\pi}{|\Delta k|}. \tag{44} \]</div>
+
+<p>
+  Para los parámetros de la figura 4, donde \(|\alpha-\beta|=k_0\), esto da
+  \(\Delta x^{(\mathrm{ciclo})}=2\pi/k_0\simeq 4.34\,\mathrm{nm}\). El intervalo
+  \(x_2\in[660.4,\,664.7]\,\mathrm{nm}\) mostrado en la figura abarca aproximadamente un ciclo
+  completo de esta modulación espacial, en concordancia con la alternancia observada entre las
+  densidades de probabilidad simétrica y antisimétrica.
+</p>
+
+<h4 id="recuperacion">Recuperación de la difracción en el tiempo mediante la representación de Bessel</h4>
+
+<p>
+  La aproximación exponencial empleada arriba captura exitosamente la secuencia de activación y la
+  modulación de intercambio responsable de la alternancia entre las densidades de probabilidad
+  simétrica y antisimétrica. Sin embargo, al conservar únicamente el término exponencial en el desarrollo asintótico de la función de Moshinsky, reduce la dinámica transitoria a escalones de
+  activación abruptos [cf. ecuación (42)] y por lo tanto no reproduce las oscilaciones de difracción
+  en el tiempo observadas en la solución exacta.
+</p>
+
+<p>
+  Para recuperar estas características transitorias, hay que conservar el término no exponencial dominante en el desarrollo asintótico de la función de Moshinsky [ecuación (19)]. Procediendo como
+  antes, pero conservando ahora la contribución no exponencial dominante, se obtiene
+</p>
+
+<div class="ec" id="ec45">\[ \begin{aligned}
+\left|\Psi^{\pm}_{\alpha, \beta}(x_{1}, x_{2}, t)\right|^{2} &\approx \frac{1}{2}\left[1+\frac{Y_0(p_{\alpha}^2) +Y_0(q_{\beta}^2)}{\sqrt{2}}\right] \Theta\left(t-t_{c,\alpha 1}\right) \Theta\left(t-t_{c,\beta 2}\right) \\
+& +\frac{1}{2}\left[1+\frac{Y_0(p_{\beta}^2) +Y_0(q_{\alpha}^2)}{\sqrt{2}}\right]\Theta\left(t-t_{c,\beta 1}\right) \Theta\left(t-t_{c,\alpha 2}\right) \\
+&\pm I_{\alpha,\beta}(x_{1}, x_{2}, t)
+\end{aligned} \tag{45} \]</div>
+
+<p>
+  La ecuación (45) restituye los ingredientes responsables de las oscilaciones de difracción en el
+  tiempo, preservando al mismo tiempo la secuencia de activación establecida antes. Reúne en una sola
+  expresión analítica los principales elementos físicos del análisis: la activación secuencial de las
+  dos contribuciones directas, sus oscilaciones de difracción en el tiempo, y el término de
+  interferencia de intercambio responsable de la modulación espacial a tiempos largos. Las dos
+  contribuciones directas se expresan en términos de funciones de Bessel de segunda especie,
+  \(Y_0\), que restituyen la débil estructura oscilatoria ausente en la aproximación puramente
+  exponencial. Los factores de Heaviside fijan los tiempos de llegada clásicos correspondientes,
+  mientras que el término de interferencia de intercambio se conserva en la forma definida en la
+  ecuación (35).
+</p>
+
+<figure id="fig7">
+  <img src="figuras/fig7.png" alt="Comparación entre la densidad conjunta exacta y la aproximación por funciones de Bessel para los casos simétrico y antisimétrico: ambas coinciden salvo en vecindades estrechas de los tiempos de llegada.">
+  <figcaption>
+    <b>Figura 7.</b> Comparación entre la densidad de probabilidad conjunta exacta obtenida de la
+    ecuación (14) (líneas continuas) y la aproximación por funciones de Bessel dada por la ecuación
+    (45) (líneas naranjas discontinuas), para los mismos parámetros que en la figura 5
+    (\(x_1=10\) nm, \(x_2=660.4\) nm, \(\alpha=k_0\), \(\beta=2k_0\)). Panel superior: densidad
+    simétrica (exacta en azul). Panel inferior: densidad antisimétrica (exacta en rojo). La
+    aproximación reproduce el resultado exacto a lo largo tanto del régimen de meseta (gris) como del
+    de fluctuaciones intensas (verde), excepto en vecindades estrechas de los tiempos de llegada
+    clásicos, donde los escalones de Heaviside introducen pequeñas discontinuidades artificiales.
+    Como en las figuras 2 y 3, la aproximación se grafica a partir del primer cero de cada función
+    \(Y_0\), con el fin de evitar evaluarla en su singularidad logarítmica.
+  </figcaption>
+</figure>
+
+<p>
+  Los escalones de Heaviside en la ecuación (45) introducen pequeñas discontinuidades artificiales en
+  los tiempos de llegada clásicos, ausentes en la solución exacta. Fuera de vecindades estrechas de
+  estos tiempos, sin embargo, la ecuación (45) concuerda estrechamente con el resultado completo de
+  la ecuación (14), como se ilustra en la figura 7. La comparación muestra que la aproximación
+  reproduce tanto el régimen de meseta como el régimen de fluctuaciones a tiempos largos para las
+  densidades simétrica y antisimétrica, a la vez que recupera la estructura transitoria oscilatoria
+  de difracción en el tiempo asociada a cada frente de activación.
+</p>
+
+<p>
+  Un aspecto metodológico interesante del presente análisis es que la representación en funciones de
+  Bessel se obtiene de manera opuesta a la empleada habitualmente en el análisis asintótico. En lugar
+  de reemplazar una función especial conocida por su desarrollo asintótico, identificamos la
+  estructura asintótica que emerge de el desarrollo de Moshinsky y reconstruimos la función de Bessel
+  exacta correspondiente. Esta identificación revela que la contribución no exponencial dominante de
+  el desarrollo asintótico queda naturalmente codificada en la estructura analítica de la función de
+  Bessel \(Y_0\), proporcionando así una descripción analítica compacta de la dinámica transitoria de
+  difracción.
+</p>
+</div>
+</details>
+</div>
+</details>
+
+<details class="sec" open data-clave="conclusiones">
+<summary class="sec__cab"><h2 id="conclusiones"><span class="sec-n">4</span>Conclusiones</h2><svg class="galon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5 12 15.5 18 9.5"/></svg></summary>
+<div class="sec__cuerpo">
+<p>
+  La extensión del paradigma del obturador cuántico a sistemas de dos partículas idénticas revela el
+  papel fundamental de la interferencia de intercambio en la dinámica transitoria de ondas de
+  materia. Hemos investigado esta extensión deduciendo una expresión analítica exacta para la densidad
+  de probabilidad de detección conjunta
+  \(\left|\Psi_{\alpha, \beta}^{\pm}(x_1, x_2, t)\right|^2\) en términos de funciones de Moshinsky de
+  una partícula. La descomposición resultante en dos contribuciones directas y un término de
+  interferencia de intercambio proporciona el marco estructural que organiza la dinámica transitoria
+  a lo largo de las tres configuraciones de propagación analizadas.
+</p>
+
+<p>
+  Estas configuraciones revelan manifestaciones distintas de la interferencia de intercambio, que van
+  desde simples efectos de simetría hasta fluctuaciones espaciales pronunciadas. En el régimen
+  degenerado coincidente (\(x_1=x_2\), \(\alpha=\beta\)), los canales simétrico y antisimétrico
+  exhiben interferencia de intercambio completamente constructiva y destructiva, respectivamente,
+  junto con una representación asintótica de la difracción en el tiempo en términos de la función de
+  Bessel de segunda especie de orden cero \(Y_0(\gamma^2)\). Para posiciones coincidentes y números
+  de onda ligeramente distintos (\(x_1=x_2\), \(\alpha \approx \beta\)), la dinámica transitoria
+  desarrolla una estructura de batidos cuya frecuencia de oscilación principal y cuya envolvente se
+  describen ambas analíticamente. En el régimen general (\(x_1 \neq x_2\), \(\alpha \neq \beta\)), la
+  probabilidad de detección conjunta evoluciona a través de tres etapas temporales sucesivas: un
+  régimen inicial silencioso, una meseta intermedia y un régimen de fluctuaciones espaciales
+  pronunciadas, cuyo comportamiento asintótico está gobernado por el factor de modulación
+  \(1 \pm \cos(\Delta k \Delta x)\). En conjunto, estos hallazgos proporcionan una descripción
+  unificada de la emergencia secuencial de la interferencia de intercambio a lo largo de las tres
+  configuraciones de propagación.
+</p>
+
+<p>
+  El análisis asintótico separa por sí solo dos contribuciones físicas distintas a la dinámica.
+  El término no exponencial conserva la memoria de la apertura súbita del obturador cuántico, dando
+  lugar a fenómenos genuinamente transitorios tales como las oscilaciones de difracción en el tiempo,
+  la fase de Fresnel y su atenuación característica. En contraste, la contribución exponencial
+  sobrevive en el límite estacionario y preserva la estructura de correlación inducida por
+  intercambio del estado de dos partículas, conduciendo a las oscilaciones persistentes
+  caracterizadas por el factor \(\cos(\Delta k \Delta x)\). Esta distinción sugiere que la dinámica
+  transitoria asociada al mecanismo de preparación se desvanece gradualmente, mientras que las
+  correlaciones impuestas por la simetría de intercambio permanecen como una propiedad intrínseca del
+  estado en evolución.
+</p>
+
+<p>
+  El presente análisis establece al obturador cuántico como modelo prototípico de la liberación
+  súbita de ondas de materia coherentes y como un escenario conceptualmente transparente en el que las firmas transitorias de la interferencia de intercambio pueden aislarse y comprenderse
+  analíticamente. Tal dinámica transitoria podría ser relevante para guías de onda atómicas
+  cuasi-unidimensionales y para nubes atómicas ultrafrías en caída libre tras su liberación de trampas ópticas o magnéticas. La riqueza de los fenómenos transitorios revelados en el problema de propagación
+  libre indica que esta configuración fundamental proporciona ya una referencia valiosa para
+  comprender la dinámica inducida por intercambio. Establece además un punto de partida natural para
+  investigaciones futuras de sistemas dispersores más complejos, donde se espera que mecanismos
+  adicionales de interferencia y resonancia enriquezcan aún más el comportamiento transitorio.
+</p>
+</div>
+</details>
+
+<details class="sec" open data-clave="referencias">
+<summary class="sec__cab"><h2 id="referencias">Referencias</h2><svg class="galon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5 12 15.5 18 9.5"/></svg></summary>
+<div class="sec__cuerpo">
+<ol class="refs">
+  <li><span class="aut">M. Moshinsky.</span> Diffraction in time. <cite>Phys. Rev.</cite> <b>88</b>, 625–631 (1952).</li>
+  <li><span class="aut">P. Szriftgiser, D. Guéry-Odelin, M. Arndt y J. Dalibard.</span> Atomic wave diffraction and interference using temporal slits. <cite>Phys. Rev. Lett.</cite> <b>77</b>, 4–7 (1996).</li>
+  <li><span class="aut">M. Yasuda y F. Shimizu.</span> Observation of two-atom correlation of an ultracold neon atomic beam. <cite>Phys. Rev. Lett.</cite> <b>77</b>, 3090–3093 (1996).</li>
+  <li><span class="aut">M. Schellekens, R. Hoppeler, A. Perrin, J. Viana Gomes, D. Boiron, A. Aspect y C. I. Westbrook.</span> Hanbury Brown Twiss effect for ultracold quantum gases. <cite>Science</cite> <b>310</b>(5748), 648–651 (2005).</li>
+  <li><span class="aut">T. Jeltes, J. M. McNamara, W. Hogervorst, W. Vassen, V. Krachmalnicoff, M. Schellekens, A. Perrin, H. Chang, D. Boiron, A. Aspect y C. I. Westbrook.</span> Comparison of the Hanbury Brown–Twiss effect for bosons and fermions. <cite>Nature</cite> <b>445</b>(7126), 402–405 (2007).</li>
+  <li><span class="aut">A. del Campo, G. García-Calderón y J. G. Muga.</span> Quantum transients. <cite>Physics Reports</cite> <b>476</b>(1–3), 1 (2009).</li>
+  <li><span class="aut">R. Hanbury Brown y R. Q. Twiss.</span> Correlation between photons in two coherent beams of light. <cite>Nature</cite> <b>177</b>(4497), 27–29 (1956).</li>
+  <li><span class="aut">P. Sancho.</span> Identical two-particle interferometry in diffraction gratings. <cite>J. Phys. B: At. Mol. Opt. Phys.</cite> <b>43</b>(6), 065504 (2010).</li>
+  <li><span class="aut">G. García-Calderón y A. Rubio.</span> Transient effects and delay time in the dynamics of resonant tunneling. <cite>Phys. Rev. A</cite> <b>55</b>, 3361–3370 (1997).</li>
+</ol>
+</div>
+</details>
+
+</main>
+</div>
+
+<footer class="pie">
+  <div class="contenedor pie__inner">
+    <div>
+      <strong>Transitorios cuánticos de partículas idénticas</strong>
+      Miguel Ángel Terán · Roberto Romo · Gastón García-Calderón
+    </div>
+    <div>
+      Facultad de Ciencias, UABC Ensenada · Instituto de Física, UNAM<br>
+      Versión en español · <span data-anio>2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* --- Índice de ecuaciones: se construye a partir de los .ec numerados --- */
+  function listaEcuaciones() {
+    var host = document.getElementById('lista-ecs');
+    if (!host) return;
+    var ecs = document.querySelectorAll('.ec[id^="ec"]');
+    var partes = [];
+    for (var i = 0; i < ecs.length; i++) {
+      var n = ecs[i].id.replace('ec', '');
+      partes.push('<li><a href="#ec' + n + '">' + n + '</a></li>');
+    }
+    host.innerHTML = partes.join('');
+  }
+
+  /* --- Destello al llegar a una ecuación por su ancla --- */
+  function destello() {
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest ? e.target.closest('a[href^="#ec"]') : null;
+      if (!a) return;
+      var destino = document.getElementById(a.getAttribute('href').slice(1));
+      if (!destino) return;
+      destino.classList.add('destello');
+      window.setTimeout(function () { destino.classList.remove('destello'); }, 1200);
+    });
+  }
+
+  /* --- Resaltar la sección activa en el índice lateral --- */
+  var destinos = [];
+  var actual = null;
+  var enganchado = false;
+
+  function recomputar() {
+    var enlaces = Array.prototype.slice.call(document.querySelectorAll('.toc ol a[href^="#"]'));
+    destinos = enlaces.map(function (a) {
+      var el = document.getElementById(a.getAttribute('href').slice(1));
+      return el ? { enlace: a, el: el } : null;
+    }).filter(Boolean);
+    actual = null;
+  }
+
+  function marcar() {
+    if (!destinos.length) return;
+    var y = window.scrollY + 130;
+    var hallado = destinos[0];
+    for (var i = 0; i < destinos.length; i++) {
+      if (destinos[i].el.getBoundingClientRect().top + window.scrollY <= y) hallado = destinos[i];
+      else break;
+    }
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 60) {
+      hallado = destinos[destinos.length - 1];
+    }
+    if (hallado === actual) return;
+    if (actual) actual.enlace.classList.remove('activo');
+    hallado.enlace.classList.add('activo');
+    actual = hallado;
+  }
+
+  function activarTOC() {
+    recomputar();
+    if (!destinos.length) return;
+    if (!enganchado) {
+      var esperando = false;
+      window.addEventListener('scroll', function () {
+        if (esperando) return;
+        esperando = true;
+        window.requestAnimationFrame(function () { marcar(); esperando = false; });
+      }, { passive: true });
+      enganchado = true;
+    }
+    marcar();
+  }
+  window.IEC_CONTENIDO = activarTOC;
+
+  /* ===================================================================
+     Secciones desplegables
+
+     Se apoyan en <details> nativo: sin JavaScript siguen abiertas y
+     legibles, y el teclado ya funciona solo. Lo que se añade aquí es el
+     recuento de lo que se oculta, el botón de abrir/cerrar todo, la
+     memoria entre visitas y la apertura automática al llegar por un
+     ancla del índice o del listado de ecuaciones.
+     =================================================================== */
+  var MEMORIA = 'paper-secciones';
+
+  function bloques() {
+    return Array.prototype.slice.call(document.querySelectorAll('details.sec, details.sub'));
+  }
+
+  /* Distintivo con lo que queda dentro: ecuaciones y figuras */
+  function recuentos() {
+    bloques().forEach(function (d) {
+      var cuerpo = d.querySelector('.sec__cuerpo, .sub__cuerpo');
+      if (!cuerpo) return;
+      var ecs = cuerpo.querySelectorAll('.ec[id^="ec"]').length;
+      var figs = cuerpo.querySelectorAll('figure').length;
+      var partes = [];
+      if (ecs) partes.push(ecs + (ecs === 1 ? ' ecuación' : ' ecuaciones'));
+      if (figs) partes.push(figs + (figs === 1 ? ' figura' : ' figuras'));
+      if (!partes.length) return;
+      var sum = d.querySelector('summary');
+      if (!sum || sum.querySelector('.cuenta')) return;
+      var marca = document.createElement('span');
+      marca.className = 'cuenta';
+      marca.textContent = partes.join(' · ');
+      sum.appendChild(marca);
+    });
+  }
+
+  function guardarEstado() {
+    try {
+      var cerradas = bloques().filter(function (d) { return !d.open; })
+                              .map(function (d) { return d.dataset.clave; });
+      localStorage.setItem(MEMORIA, JSON.stringify(cerradas));
+    } catch (e) { /* sin almacenamiento: no pasa nada */ }
+  }
+
+  function restaurarEstado() {
+    var cerradas;
+    try { cerradas = JSON.parse(localStorage.getItem(MEMORIA) || '[]'); } catch (e) { return; }
+    if (!Array.isArray(cerradas) || !cerradas.length) return;
+    bloques().forEach(function (d) {
+      if (cerradas.indexOf(d.dataset.clave) !== -1) d.open = false;
+    });
+  }
+
+  /* Botón «Contraer todo» / «Abrir todo» */
+  function botonTodo() {
+    var btn = document.getElementById('btn-todo');
+    if (!btn) return;
+
+    function refrescar() {
+      var hayAbiertas = bloques().some(function (d) { return d.open; });
+      btn.textContent = hayAbiertas ? 'Contraer todo' : 'Abrir todo';
+      btn.dataset.accion = hayAbiertas ? 'cerrar' : 'abrir';
+    }
+
+    btn.addEventListener('click', function () {
+      var abrir = btn.dataset.accion === 'abrir';
+      bloques().forEach(function (d) { d.open = abrir; });
+      refrescar();
+      guardarEstado();
+      activarTOC();
+    });
+
+    document.addEventListener('toggle', function (e) {
+      if (e.target.tagName === 'DETAILS') { refrescar(); guardarEstado(); activarTOC(); }
+    }, true);
+
+    refrescar();
+  }
+
+  /* Abrir los bloques que contienen un destino antes de saltar a él */
+  function abrirAncestros(el) {
+    var abierto = false;
+    var d = el.closest ? el.closest('details') : null;
+    while (d) {
+      if (!d.open) { d.open = true; abierto = true; }
+      d = d.parentElement ? d.parentElement.closest('details') : null;
+    }
+    return abierto;
+  }
+
+  function navegacionPorAnclas() {
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+      if (!a) return;
+      var id = a.getAttribute('href').slice(1);
+      if (!id) return;
+      var destino = document.getElementById(id);
+      if (!destino) return;
+      if (abrirAncestros(destino)) {
+        /* El contenido acaba de aparecer: se reposiciona a mano */
+        e.preventDefault();
+        window.requestAnimationFrame(function () {
+          destino.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          history.replaceState(null, '', '#' + id);
+          activarTOC();
+        });
+      }
+    });
+
+    /* Llegada directa con un ancla en la dirección */
+    function alCargarConAncla() {
+      if (!location.hash) return;
+      var destino = document.getElementById(location.hash.slice(1));
+      if (destino && abrirAncestros(destino)) {
+        window.requestAnimationFrame(function () { destino.scrollIntoView(); });
+      }
+    }
+    alCargarConAncla();
+    window.addEventListener('hashchange', alCargarConAncla);
+  }
+
+  /* --- Índice desplegable en pantallas angostas --- */
+  function tocMovil() {
+    var btn = document.getElementById('toc-btn');
+    var toc = document.getElementById('toc');
+    if (!btn || !toc) return;
+    btn.addEventListener('click', function () {
+      var abierto = toc.classList.toggle('abierto');
+      btn.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+    });
+    toc.addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') {
+        toc.classList.remove('abierto');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  /* --- Modos de lectura: claro → lectura (papel) → oscuro --- */
+  var MODOS = ['claro', 'lectura', 'oscuro'];
+  var NOMBRES = { claro: 'claro', lectura: 'lectura', oscuro: 'oscuro' };
+
+  function tema() {
+    var raiz = document.documentElement;
+    var btn = document.getElementById('tema-btn');
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+
+    function guardado() {
+      try {
+        var t = localStorage.getItem('paper-tema');
+        return MODOS.indexOf(t) !== -1 ? t : null;
+      } catch (e) { return null; }
+    }
+
+    function aplicar(t) {
+      if (t === 'claro') raiz.removeAttribute('data-tema');
+      else raiz.setAttribute('data-tema', t);
+      if (btn) {
+        var siguiente = MODOS[(MODOS.indexOf(t) + 1) % MODOS.length];
+        btn.title = 'Modo ' + NOMBRES[t] + ' · cambiar a modo ' + NOMBRES[siguiente];
+        btn.setAttribute('aria-label', btn.title);
+      }
+    }
+
+    aplicar(guardado() || (mq.matches ? 'oscuro' : 'claro'));
+
+    if (btn) {
+      btn.addEventListener('click', function () {
+        var actual = raiz.getAttribute('data-tema') || 'claro';
+        var nuevo = MODOS[(MODOS.indexOf(actual) + 1) % MODOS.length];
+        aplicar(nuevo);
+        try { localStorage.setItem('paper-tema', nuevo); } catch (e) {}
+      });
+    }
+
+    /* Mientras no haya elección manual, se sigue al sistema */
+    var alCambiar = function (e) { if (!guardado()) aplicar(e.matches ? 'oscuro' : 'claro'); };
+    if (mq.addEventListener) mq.addEventListener('change', alCambiar);
+    else if (mq.addListener) mq.addListener(alCambiar);
+  }
+
+  function anioPie() {
+    var n = document.querySelectorAll('[data-anio]');
+    for (var i = 0; i < n.length; i++) n[i].textContent = new Date().getFullYear();
+  }
+
+  function iniciar() {
+    tema();
+    listaEcuaciones();
+    recuentos();
+    restaurarEstado();
+    botonTodo();
+    navegacionPorAnclas();
+    destello();
+    tocMovil();
+    activarTOC();
+    anioPie();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
+  else iniciar();
+})();
+</script>
+
+</body>
+</html>
