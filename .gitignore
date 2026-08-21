@@ -1,0 +1,5 @@
+# Lo que NUNCA debe publicarse: el articulo sin cifrar.
+figuras/
+pdf/*.pdf
+fuente/
+*.tex
